@@ -4,8 +4,7 @@
 Author: Shivam Glotra (individual project)  
 Repository: <https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent>
 
-> Still to add before submission: the video links (§7), the commits of 3–9 November (§6.1), and the
-> LLM model name in §5.1.
+> Still to add before submission: the video links (§7) and the LLM model name in §5.1.
 
 ## Contents
 1. Project overview and implementation status
@@ -455,7 +454,7 @@ meaningful code commits across the stage.
 | Before 20 Oct (early start) | 6 | [`0f85939`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/0f85939c6cf498b749ec0e24d527c96565d3591b) implementation of F01–F10 · [`e4c412d`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/e4c412df9004fba55bcb14b27702dc242b704e68) GUI redesign · [`7451c60`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/7451c60947415adcdcc0c1c4f940b401cb9ad672) model factory + Ollama · [`6eacd8f`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/6eacd8fedfb780e9351a36dcabe472a103effa15) `.env` · [`5430d5a`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/5430d5a60b560e6fe536aed9e9854072f8301ff5) Gemini · [`4bf232f`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/4bf232f8db80604dadf4b7e2ee406d4f345781bd) model switcher |
 | 1: 20–26 Oct | 0 | (planning against the Stage 2 instructions) |
 | 2: 27 Oct – 2 Nov | 9 | [`6bfd56c`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/6bfd56cb0beb90b7119c453886d2a93d1510aee3) whole-piece rounding · [`f70e701`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/f70e7019f2aec6cc3a948f6c0e9217382b0f8389) "sun-dried" day fix · [`86b5b1e`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/86b5b1e1cf74bcc80ce37ec172a38af6f112368e) multi-word avoid · [`db82527`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/db8252718e733b5973c79732fa81ece07d831b12) dairy dislikes · [`9deb476`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/9deb476d92eb3612731fb4691d64040870ee2fe8) one model per request · [`82148d6`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/82148d65124a2bb52b3e12a67ef1a88d8f01e81a) accented entries · [`94a8a8a`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/94a8a8af23cd176977b6dbfc8b441bfc0bd1f3e7) boundary tests · [`f8fe10f`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/f8fe10f19174e2c19e2413b9d536fdd188cca66d) CLI undo message · [`c022ae4`](https://github.com/ShivamGlotra/EECS-3311-AI-Smart-Recipe-and-Meal-Planning-Agent/commit/c022ae494397df99984956f9f1974aa27eb0614f) decimal numbers in requests |
-| 3: 3–9 Nov | *(to be added)* | |
+| 3: 3–9 Nov | 0 | Stage 2 code was complete on 29 Oct; this week went into the feature videos and Stage 3 testing (separate branch) |
 | **Total** | **15** | 15 required in total |
 
 Pull requests: #3–#10 (one per fix branch; A7 was committed directly on `develop`). Documentation-only commits (report, diagrams, README) are not
@@ -513,3 +512,4 @@ Ollama model) for the AI features and show both the GUI and the CLI. The recordi
 | F09 Nutrition Information | GUI (recipe and plan) + CLI | *(to be added)* |
 | F10 Shopping List Generation | GUI (pantry subtracted, whole pieces) + CLI | *(to be added)* |
 | F11 AI Model Selection (new) | GUI (switch model, missing-key message, boxes locked during a request) | *(to be added)* |
+| CLI walk-through | Every command in one session, including the error cases | *(to be added)* |
