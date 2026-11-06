@@ -44,8 +44,8 @@ how that report was written.
 | AI provider choice | `ai/AIModelFactory.java`, `app/SmartPlateApp.java` (`chooseModel` and the error handling in `main`) | **Partly** | The author wrote the factory that picks mock / anthropic / ollama from `SMARTPLATE_AI_PROVIDER`, and `SmartPlateApp`'s use of it. At the author's request Claude Code later extended the factory with the `gemini` provider, `.env` loading and the helpers the GUI switcher needs (`PROVIDERS`, `forProvider`, `missingSetting`, `providerOf`) |
 | Gemini adapter, `.env` support, AI model switcher | `ai/GeminiAdapter.java`, `ai/EnvFile.java`, `.env.example`, `.gitignore`, `SmartRecipeFacade.setAIProvider`, `MealPlanningAgent.setAIModel`, `MealPlannerGUI.modelSwitcher` | Yes | Requested by the author; written by Claude Code |
 | Local model adapter | `ai/OllamaAdapter.java` | Yes | Written by Claude Code to the constructor and constants the author's factory expects |
-| Stage 2 defect fixes A1–A8 (shopping-list rounding, "sun-dried", multi-word avoid, dairy dislikes, one model per request, accents, edge tests, CLI undo message, decimal numbers) | `ShoppingList`, `ShoppingListService`, `Days`, `MealPlanningAgent`, `MockAIModel`, `RequestConstraints`, `DietRules`, `Ingredient`, `UserProfile`, `AssistantPanel`, `MealPlannerGUI` and their tests | **Partly** | Claude Code reproduced each defect, explained the cause and wrote the proposed code, tests and test steps (for A4–A6 also patch files). The author chose which defects to fix, applied the changes on its own `fix/*` branches, ran the tests and the GUI/CLI checks, and committed and merged them (commits `6bfd56c` … `94a8a8a`). |
-| Tests | `src/test/**` | Yes (most); the A1–A7 tests were applied by the author | 132 JUnit 5 tests in 21 classes (16 of them for the GUI; 24 for the AI model factory, `.env`, Ollama and Gemini adapters) |
+| Stage 2 defect fixes A1–A9 (shopping-list rounding, "sun-dried", multi-word avoid, dairy dislikes, one model per request, accents, edge tests, CLI undo message, decimal numbers, substitution steps) | `ShoppingList`, `ShoppingListService`, `SubstitutionService`, `Recipe`, `Days`, `MealPlanningAgent`, `MockAIModel`, `RequestConstraints`, `DietRules`, `Ingredient`, `UserProfile`, `AssistantPanel`, `MealPlannerGUI` and their tests | **Partly** | Claude Code reproduced each defect, explained the cause and wrote the proposed code, tests and test steps (for A4–A6 also patch files). The author chose which defects to fix, applied the changes on its own `fix/*` branches, ran the tests and the GUI/CLI checks, and committed and merged them (commits `6bfd56c` … `94a8a8a`). A8 and A9 were committed by Claude Code on their own branches at the author's request; the author reviewed and merged them (PRs #10, #13). |
+| Tests | `src/test/**` | Yes (most); the A1–A7 tests were applied by the author | 134 JUnit 5 tests in 21 classes (16 of them for the GUI; 24 for the AI model factory, `.env`, Ollama and Gemini adapters) |
 | Documentation | `docs/IMPLEMENTATION.md`, `docs/DEVELOPER_GUIDE.md`, this file | Yes | Code explanation, developer guide and this disclosure |
 | Stage 2 report | `docs/STAGE2_REPORT.md` | Drafted by AI | Tools table, collaboration log, traceability and design changes, drafted from the session history; confirmed and completed by the author |
 
@@ -62,7 +62,7 @@ These checks were run during generation and can be repeated by anyone:
 | Check | How to repeat | Result at time of writing |
 |---|---|---|
 | Compiles | `mvn compile` | Success |
-| Unit tests | `mvn test` | 132 tests, 0 failures, 0 errors |
+| Unit tests | `mvn test` | 134 tests, 0 failures, 0 errors |
 | Runnable jar | `mvn package` then `java -jar target/smartplate-1.0.0.jar --cli` | Starts; commands work |
 | Scripted CLI session covering F01–F10 | See `MealPlannerCLITest` and the session in `docs/IMPLEMENTATION.md` §1 | Expected output |
 | GUI | Launched on a virtual display and driven through every state (empty, error, plan, edit, shopping list, nutrition, recipes, pantry error, preferences error) | Works; screenshots in `docs/screenshots/`. One bug was found by the new GUI tests and fixed (the pantry "Added …" message was cleared by the row selection). |
@@ -91,7 +91,7 @@ SmartPlate is an individual project, so there is one reviewer.
 
 | Reviewer | Files / features reviewed | Changes made after review | Date |
 |---|---|---|---|
-| Shivam Glotra | The whole application through the GUI and CLI; the AI layer (`AIModelFactory`, which the author wrote, and the Ollama/Gemini adapters); the agent, domain and GUI code touched by fixes A1–A8 | Designed and wrote `AIModelFactory`; asked for the GUI redesign, `.env` key handling, the Gemini adapter and the model switcher; applied and tested fixes A1–A7 on separate branches; found bug A8 and chose its rounding rule; ran the app with Gemini and `gemma4:e4b` | 15–30 Oct 2026 |
+| Shivam Glotra | The whole application through the GUI and CLI; the AI layer (`AIModelFactory`, which the author wrote, and the Ollama/Gemini adapters); the agent, domain and GUI code touched by fixes A1–A9 | Designed and wrote `AIModelFactory`; asked for the GUI redesign, `.env` key handling, the Gemini adapter and the model switcher; applied and tested fixes A1–A7 on separate branches; found bug A8 and chose its rounding rule; found bug A9 while recording and reviewed its fix; ran the app with Gemini and `gemma4:e4b` | 15 Oct – 6 Nov 2026 |
 
 Questions worth answering during review (the TA may ask them):
 

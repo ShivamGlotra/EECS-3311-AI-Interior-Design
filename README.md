@@ -21,7 +21,7 @@ Nothing to install by hand: Maven downloads every library (Anthropic Java SDK, F
 the first time you build. From the project folder:
 
 ```bash
-mvn test       # downloads dependencies, compiles, runs the 132 JUnit tests (offline, no API key)
+mvn test       # downloads dependencies, compiles, runs the 134 JUnit tests (offline, no API key)
 mvn package    # builds target/smartplate-1.0.0.jar (includes all dependencies)
 ```
 

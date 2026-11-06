@@ -181,7 +181,7 @@ the facade.
 
 ```bash
 mvn compile                          # compile only (like tsc)
-mvn test                             # run all 132 tests
+mvn test                             # run all 134 tests
 mvn package                          # build target/smartplate-1.0.0.jar (includes all libraries)
 java -jar target/smartplate-1.0.0.jar            # open the desktop app
 java -jar target/smartplate-1.0.0.jar --cli      # command-line version
@@ -300,7 +300,7 @@ src/main/java/com/smartplate/
       Icons.java                      small icons drawn in code
       TaskRunner.java                 runs AI calls in the background (or directly in tests)
 
-src/test/java/com/smartplate/         21 test classes, 132 tests (see section 12)
+src/test/java/com/smartplate/         21 test classes, 134 tests (see section 12)
 ```
 
 ---
@@ -618,9 +618,11 @@ Immutable. `builder(id, name)` (:46) is used by `SampleData` (`.time().servings(
   `findById` (:66) is case-insensitive.
 - `ServingScaler.scale(recipe, servings)` (:13): factor = new / old servings; every quantity × factor;
   errors for servings < 1 or bad quantities.
-- `SubstitutionService.findSubstitute` (:42): all predefined substitutions for that ingredient
+- `SubstitutionService.findSubstitute` (:45): all predefined substitutions for that ingredient
   (`getSubstitutionsFor` :31), the first whose substitute has **no** `DietRules.conflicts` with the
-  profile. `applySubstitution` (:57): quantity × factor, unit = substitution's unit or the original.
+  profile. `applySubstitution` (:63): quantity × factor, unit = substitution's unit or the original;
+  `rewriteSteps` (:86) names the substitute in the steps (whole words, plurals kept, short names such as
+  "chicken" for chicken breast when the full name is not in any step).
 - `NutritionService.calculateRecipe` (:12) = per serving × servings; `calculatePlan` (:29) =
   `plan.getNutrition()` (Composite).
 - `ShoppingListService.generate` (:20): see 8.3.
@@ -714,7 +716,7 @@ Errors print as `Error: <message>`; the loop never crashes on a `SmartPlateExcep
 
 ## 12. Tests
 
-`mvn test` runs **132 tests** in 21 classes, all offline (no real AI is called):
+`mvn test` runs **134 tests** in 21 classes, all offline (no real AI is called):
 
 | Test class | What it protects |
 |---|---|
