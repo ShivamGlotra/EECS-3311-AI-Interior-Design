@@ -79,7 +79,7 @@ All paths are under `src/main/java/com/smartplate/`. Every feature is reached th
 | Classes / responsibilities | `PreferencesPanel` (form, error banner, field highlighting); `MealPlannerCLI` (`profile set …`); `SmartRecipeFacade` (entry point, keeps the active profile); `UserProfile` (data + `validate()` rules); `InvalidProfileException` (carries the problem list) |
 | Key methods                | `SmartRecipeFacade.setupProfile`, `UserProfile.validate`, `UserProfile.checkEntries`, `PreferencesPanel.save`                                                                                                                                                 |
 | Design patterns            | Facade                                                                                                                                                                                                                                                        |
-| Video                      | §7, F01                                                                                                                                                                                                                                                       |
+| Video                      | [F01 video](https://drive.google.com/file/d/1ywMRZXXX9ilsV7yKfPaxjmKeJLjajj0t/view) (§7)                                                                                                                                                                                                                                                       |
 
 **How it works.** The panel or CLI builds a `UserProfile` and calls `setupProfile`. `validate()`
 returns every problem (servings or time below 1, unknown diet, duplicate or malformed entries). If the
@@ -96,7 +96,7 @@ profile stays active, and the GUI lists the problems in a red banner and outline
 | Classes / responsibilities | `PantryPanel` (form + table); `MealPlannerCLI` (`pantry add                                                   | update | remove`); `SmartRecipeFacade`; `Pantry`(items, rules);`PantryItem`, `Ingredient`, `PantryAction`; `Units` (unit families and conversion) |
 | Key methods                | `SmartRecipeFacade.managePantry`, `Pantry.addItem`, `Pantry.updateItem`, `Pantry.removeItem`, `Units.convert` |
 | Design patterns            | Facade                                                                                                        |
-| Video                      | §7, F02                                                                                                       |
+| Video                      | [F02 video](https://drive.google.com/file/d/1LSwei6CiMmU82NGKRMQz3Yz1bKb9omcT/view) (§7)                                                                                                       |
 
 **How it works.** `managePantry(action, item)` dispatches ADD / UPDATE / REMOVE to `Pantry`. Adding an
 existing item converts and adds the quantity if the units are compatible; zero or negative quantities,
@@ -113,7 +113,7 @@ shown next to the right field.
 | Classes / responsibilities | `RecipesPanel` (search box + results table); `MealPlannerCLI` (`search`, `recipes`, `show`); `SmartRecipeFacade`; `RecipeRepository` (the 30 recipes from `SampleData`) |
 | Key methods                | `SmartRecipeFacade.searchRecipes`, `RecipeRepository.search`, `RecipeRepository.findById`, `RecipeRepository.findAll`                                                   |
 | Design patterns            | Facade                                                                                                                                                                  |
-| Video                      | §7, F03                                                                                                                                                                 |
+| Video                      | [F03 video](https://drive.google.com/file/d/19Z8dPHL6dpDr7XH5LlcFyngEJ31RmJvF/view) (§7)                                                                                                                                                                 |
 
 **How it works.** An empty query is rejected; otherwise every word of the query must appear in the
 recipe's name, tags or ingredient names. The results table opens the selected recipe.
@@ -128,7 +128,7 @@ recipe's name, tags or ingredient names. The results table opens the selected re
 | Classes / responsibilities | `AssistantPanel` (request box, results, agent trace); `MealPlannerCLI` (`recommend`, `trace`); `SmartRecipeFacade`; `MealPlanningAgent` (the agent loop); `RequestConstraints` (rules read from the request); `RecipeSelectionStrategy` + `PantryFirstStrategy` / `FastestMealStrategy` (shortlist); `PromptFormat` (prompt/answer protocol); `AIModel` and its adapters (the LLM); `ConstraintValidator`, `ValidationResult`, `DietRules` (checks) |
 | Key methods                | `SmartRecipeFacade.recommendRecipes`, `MealPlanningAgent.recommend`, `RequestConstraints.parse/applyTo`, `RecipeSelectionStrategy.selectRecipes`, `AIModel.generate`, `ConstraintValidator.validateRecipe`                                                                                                                                                                                                                                          |
 | Design patterns            | Facade, Strategy, Adapter                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| Video                      | §7, F04                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Video                      | [F04 video](https://drive.google.com/file/d/1iwPiz7qdy6VLMnskpPEJhCKe_W3s3Liv/view) (§7)                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 **How it works.** The request ("3 quick vegetarian dinners using rice, avoid red onion") is parsed
 into constraints that are added to a copy of the profile. The strategy filters and ranks all recipes
@@ -147,7 +147,7 @@ recipes that fail validation become violations; the agent then asks once more wi
 | Classes / responsibilities | as F04, plus `MealPlan` (composite: the plan), `PlannedMeal` (leaf: one dinner), `Days` (day names), `CommandHistory` (cleared for a new plan)            |
 | Key methods                | `SmartRecipeFacade.createMealPlan`, `MealPlanningAgent.createPlan`, `RequestConstraints.planDays`, `MealPlan.addMeal`, `ConstraintValidator.validatePlan` |
 | Design patterns            | Facade, Strategy, Adapter, Composite                                                                                                                      |
-| Video                      | §7, F05                                                                                                                                                   |
+| Video                      | [F05 video](https://drive.google.com/file/d/1Hcvr7EDqgcHOkOPGXcPD3K7ZLydDc1of/view) (§7)                                                                                                                                                   |
 
 **How it works.** The number of days (default 7) must be 5–7, else an error is shown without calling
 the AI. The model answers one `Day: id` line per day; each id becomes a `PlannedMeal` in a `MealPlan`.
@@ -164,7 +164,7 @@ One revision is allowed; the facade stores the valid plan and clears the undo hi
 | Classes / responsibilities | `AssistantPanel` (Edit plan / Undo, "CHANGED" marker, before/after card); `MealPlannerCLI` (`edit`, `undo`); `SmartRecipeFacade`; `MealPlanningAgent.editPlan`; `Days.findIn`; `ConstraintValidator`; `Command`, `ReplaceMealCommand` (stores day, old and new meal), `CommandHistory` (invoker, undo stack), `MealPlan` |
 | Key methods                | `SmartRecipeFacade.editMealPlan`, `SmartRecipeFacade.undoLastChange`, `MealPlanningAgent.editPlan`, `ReplaceMealCommand.execute/undo`, `CommandHistory.execute/undo/canUndo`, `MealPlan.replaceMeal`                                                                                                                     |
 | Design patterns            | Facade, Adapter, Command                                                                                                                                                                                                                                                                                                 |
-| Video                      | §7, F06                                                                                                                                                                                                                                                                                                                  |
+| Video                      | [F06 video](https://drive.google.com/file/d/1Ow1V1OE_rz0STjk40dB4HSkcRZUZSxeL/view) (§7)                                                                                                                                                                                                                                                                                                                  |
 
 **How it works.** The agent finds the day named in the request (`Days.findIn`; "sun-dried" is not
 Sunday), or lets the model pick it. The model answers `DAY:` and `RECIPE:`; the replacement must exist,
@@ -181,7 +181,7 @@ the facade runs through `CommandHistory`; Undo pops it and restores the old meal
 | Classes / responsibilities | `RecipesPanel` (Servings + Scale, working copy badge); `MealPlannerCLI` (`scale`); `SmartRecipeFacade`; `ServingScaler`; `Recipe` (immutable; scaling returns a copy) |
 | Key methods                | `SmartRecipeFacade.adjustServings`, `ServingScaler.scale`                                                                                                             |
 | Design patterns            | Facade                                                                                                                                                                |
-| Video                      | §7, F07                                                                                                                                                               |
+| Video                      | [F07 video](https://drive.google.com/file/d/1G7sIdaL8EloZPbYJlvwdGIg7Ukr-2eDs/view) (§7)                                                                                                                                                               |
 
 **How it works.** Every quantity is multiplied by `servings / recipe.servings`; fewer than 1 serving
 or an invalid quantity is rejected. The scaled copy is shown as a working copy until Reset.
@@ -196,7 +196,7 @@ or an invalid quantity is rejected. The scaled copy is shown as a working copy u
 | Classes / responsibilities | `RecipesPanel` (ingredient box + Substitute); `MealPlannerCLI` (`substitute`); `SmartRecipeFacade`; `SubstitutionService` (33 known substitutions); `Substitution`; `DietRules` (conflict check) |
 | Key methods                | `SmartRecipeFacade.substituteIngredient`, `SubstitutionService.findSubstitute`, `SubstitutionService.applySubstitution`, `DietRules.conflicts`                                                   |
 | Design patterns            | Facade                                                                                                                                                                                           |
-| Video                      | §7, F08                                                                                                                                                                                          |
+| Video                      | [F08 video](https://drive.google.com/file/d/1HX83K0ypPfzVPMQDL0fsDOpYrOL9DvSR/view) (§7)                                                                                                                                                                                          |
 
 **How it works.** The facade checks the recipe contains the ingredient; the service returns the first
 known substitute that does not conflict with the profile, then replaces the ingredient and converts the
@@ -214,7 +214,7 @@ breast. Nutrition is stored per recipe, so it does not change after a substituti
 | Classes / responsibilities | `RecipesPanel` (recipe nutrition), `AssistantPanel` (Plan nutrition view); `MealPlannerCLI` (`nutrition <id>`, `nutrition plan`); `SmartRecipeFacade`; `NutritionService`; `NutritionInfo`; `PlanComponent`, `MealPlan`, `PlannedMeal` |
 | Key methods                | `SmartRecipeFacade.calculateRecipeNutrition/calculatePlanNutrition`, `NutritionService.calculateRecipe/calculatePlan`, `PlanComponent.getNutrition`                                                                                    |
 | Design patterns            | Facade, Composite                                                                                                                                                                                                                      |
-| Video                      | §7, F09                                                                                                                                                                                                                                |
+| Video                      | [F09 video](https://drive.google.com/file/d/1MELSn5JjCpHipXkz5Yd-bdLFV3PyUmkE/view) (§7)                                                                                                                                                                                                                                |
 
 **How it works.** A recipe's nutrition is its per-serving values times servings. For the plan,
 `MealPlan.getNutrition()` sums `PlannedMeal.getNutrition()` of its children, so the service treats one
@@ -230,7 +230,7 @@ meal and the whole plan the same way.
 | Classes / responsibilities | `AssistantPanel` (Shopping list view, copy/export); `MealPlannerCLI` (`shopping`); `SmartRecipeFacade`; `ShoppingListService`; `ShoppingList`, `ShoppingItem`; `Pantry`; `PlanComponent` |
 | Key methods                | `SmartRecipeFacade.generateShoppingList`, `ShoppingListService.generate`, `PlanComponent.getIngredients`, `ShoppingList.consolidate`, `ShoppingList.roundUpQuantities`                   |
 | Design patterns            | Facade, Composite                                                                                                                                                                        |
-| Video                      | §7, F10                                                                                                                                                                                  |
+| Video                      | [F10 video](https://drive.google.com/file/d/1N3hLoaEgYH1XWglGZNVKePycFNLXcyjM/view) (§7)                                                                                                                                                                                  |
 
 **How it works.** The plan's ingredients (collected through the Composite) are merged per ingredient in
 compatible units, the pantry is subtracted, counted items are rounded up to whole pieces, and notes
@@ -246,7 +246,7 @@ explain skipped or incomparable lines. The GUI also lists what the pantry alread
 | Classes / responsibilities | `MealPlannerGUI` (AI model box; disabled during a request); `SmartRecipeFacade` (`setAIProvider`, `getAIProviders`); `AIModelFactory` (builds the right model, reports missing keys); `EnvFile` (reads `.env`); `GeminiAdapter`, `OllamaAdapter`, `AIAdapter`/`AIClient`, `MockAIModel`; `MealPlanningAgent.setAIModel`; `SmartPlateApp` (start-up choice, `--mock`) |
 | Key methods                | `SmartRecipeFacade.setAIProvider`, `AIModelFactory.fromEnvironment/create/forProvider/missingSetting`, `EnvFile.load`, `MealPlanningAgent.setAIModel`, `AssistantPanel.onBusyChange`                                                                                                                                                                                 |
 | Design patterns            | Adapter (two new adapters), Factory, Facade                                                                                                                                                                                                                                                                                                                          |
-| Video                      | §7, F11                                                                                                                                                                                                                                                                                                                                                              |
+| Video                      | [F11 video](https://drive.google.com/file/d/1lniVdSDxKqcIcNHJ7S1WSa-eCL54uGAN/view) (§7)                                                                                                                                                                                                                                                                                                                                                              |
 
 **How it works.** At start-up `SmartPlateApp` asks `AIModelFactory` for the model named by
 `SMARTPLATE_AI_PROVIDER` (default `auto`: Claude if its key is set, else Gemini, else Mock). In the
@@ -519,21 +519,21 @@ See §1. Stage 3 will add the full deterministic test report and the KUMA agent-
 
 ## 7. Demonstration index
 
-Each implemented feature has a labelled video segment. Recordings use a real model (Gemini or the local
-Ollama model) for the AI features and show both the GUI and the CLI. The recording script is in
-`docs/DEMO_SCRIPT.md`. Links and timestamps are added after recording.
+Each implemented feature has its own labelled video (Google Drive, viewable by anyone with the link). Recordings use a real model (Gemini or the local
+Ollama model) for the AI features. The feature videos show the GUI; the CLI parts of every feature are in the
+CLI walk-through video. The recording script is in `docs/DEMO_SCRIPT.md`.
 
-| Feature                           | Shown in                                                               | Link / timestamp |
+| Feature                           | Shown in                                                               | Link             |
 | --------------------------------- | ---------------------------------------------------------------------- | ---------------- |
-| F01 Preference Profile Management | GUI + CLI (invalid profile error)                                      | _(to be added)_  |
-| F02 Pantry Inventory Management   | GUI (merge units, error) + CLI                                         | _(to be added)_  |
-| F03 Recipe Search                 | GUI + CLI (empty query error)                                          | _(to be added)_  |
-| F04 AI Recipe Recommendation      | GUI with trace + CLI                                                   | _(to be added)_  |
-| F05 AI Weekly Meal Planning       | GUI (avoid, time limit; 8-day error) + CLI                             | _(to be added)_  |
-| F06 Meal Plan Editing and Undo    | GUI (CHANGED marker, Undo) + CLI                                       | _(to be added)_  |
-| F07 Serving-Size Adjustment       | GUI + CLI                                                              | _(to be added)_  |
-| F08 Ingredient Substitution       | GUI (dislike milk → oat milk) + CLI                                    | _(to be added)_  |
-| F09 Nutrition Information         | GUI (recipe and plan) + CLI                                            | _(to be added)_  |
-| F10 Shopping List Generation      | GUI (pantry subtracted, whole pieces) + CLI                            | _(to be added)_  |
-| F11 AI Model Selection (new)      | GUI (switch model, missing-key message, boxes locked during a request) | _(to be added)_  |
-| CLI walk-through                  | Every command in one session, including the error cases                | _(to be added)_  |
+| F01 Preference Profile Management | GUI + CLI (invalid profile error)                                      | [F01 video](https://drive.google.com/file/d/1ywMRZXXX9ilsV7yKfPaxjmKeJLjajj0t/view)  |
+| F02 Pantry Inventory Management   | GUI (merge units, error) + CLI                                         | [F02 video](https://drive.google.com/file/d/1LSwei6CiMmU82NGKRMQz3Yz1bKb9omcT/view)  |
+| F03 Recipe Search                 | GUI + CLI (empty query error)                                          | [F03 video](https://drive.google.com/file/d/19Z8dPHL6dpDr7XH5LlcFyngEJ31RmJvF/view)  |
+| F04 AI Recipe Recommendation      | GUI with trace + CLI                                                   | [F04 video](https://drive.google.com/file/d/1iwPiz7qdy6VLMnskpPEJhCKe_W3s3Liv/view)  |
+| F05 AI Weekly Meal Planning       | GUI (avoid, time limit; 8-day error) + CLI                             | [F05 video](https://drive.google.com/file/d/1Hcvr7EDqgcHOkOPGXcPD3K7ZLydDc1of/view)  |
+| F06 Meal Plan Editing and Undo    | GUI (CHANGED marker, Undo) + CLI                                       | [F06 video](https://drive.google.com/file/d/1Ow1V1OE_rz0STjk40dB4HSkcRZUZSxeL/view)  |
+| F07 Serving-Size Adjustment       | GUI + CLI                                                              | [F07 video](https://drive.google.com/file/d/1G7sIdaL8EloZPbYJlvwdGIg7Ukr-2eDs/view)  |
+| F08 Ingredient Substitution       | GUI (dislike milk → oat milk) + CLI                                    | [F08 video](https://drive.google.com/file/d/1HX83K0ypPfzVPMQDL0fsDOpYrOL9DvSR/view)  |
+| F09 Nutrition Information         | GUI (recipe and plan) + CLI                                            | [F09 video](https://drive.google.com/file/d/1MELSn5JjCpHipXkz5Yd-bdLFV3PyUmkE/view)  |
+| F10 Shopping List Generation      | GUI (pantry subtracted, whole pieces) + CLI                            | [F10 video](https://drive.google.com/file/d/1N3hLoaEgYH1XWglGZNVKePycFNLXcyjM/view)  |
+| F11 AI Model Selection (new)      | GUI (switch model, missing-key message, boxes locked during a request) | [F11 video](https://drive.google.com/file/d/1lniVdSDxKqcIcNHJ7S1WSa-eCL54uGAN/view)  |
+| CLI walk-through                  | Every command in one session, including the error cases                | [CLI video](https://drive.google.com/file/d/131eKa70tO4QaSagrtydwqna8EfuEHVRr/view)  |
