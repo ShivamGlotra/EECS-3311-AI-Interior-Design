@@ -117,6 +117,8 @@ Other commands: `search <words>`, `show <id>`, `scale <id> <servings>`, `substit
 
 - Stage 1 design report: [SmartPlate_Stage1_Report_FINAL.md](SmartPlate_Stage1_Report_FINAL.md) (UML in [docs/umlet-diagrams/](docs/umlet-diagrams/))
 - **Stage 2 report:** [stage2-report.pdf](stage2-report.pdf) / [stage2-report.docx](stage2-report.docx) (source: [docs/STAGE2_REPORT.md](docs/STAGE2_REPORT.md))
+- **Feature demonstration videos** (F01–F11 and the CLI): links in §7 *Demonstration index* of the Stage 2 report,
+  and in the "Video" row of each feature in §2
 - Stage 2 UML of the implemented system: [docs/umlet-diagrams/stage2/](docs/umlet-diagrams/stage2/)
 - Feature demonstration script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
 - Code explanation: [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md)
