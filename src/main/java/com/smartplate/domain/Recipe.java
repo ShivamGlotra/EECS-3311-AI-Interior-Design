@@ -106,6 +106,12 @@ public final class Recipe {
         return withServingsAndIngredients(servings, newIngredients);
     }
 
+    /** Copy of this recipe with different ingredient lines and steps (used by substitution). */
+    public Recipe withIngredientsAndSteps(List<RecipeIngredient> newIngredients, List<String> newSteps) {
+        return new Recipe(id, name, cookingTime, servings, dietaryTags, newIngredients, nutritionPerServing,
+                newSteps);
+    }
+
     /** One-line summary used in lists and AI prompts. */
     public String summary() {
         return id + " | " + name + " | " + cookingTime + " min | serves " + servings
