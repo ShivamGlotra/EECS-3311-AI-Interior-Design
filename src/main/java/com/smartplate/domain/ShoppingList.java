@@ -21,8 +21,10 @@ public class ShoppingList {
     }
 
     /**
-     * Merges duplicate lines: the same ingredient in compatible units becomes one line
-     * (in the family's base unit, shown as kg / l when large). Incompatible units, for
+     * Merges duplicate lines: the same ingredient in compatible units becomes one
+     * line
+     * (in the family's base unit, shown as kg / l when large). Incompatible units,
+     * for
      * example g and pcs of the same ingredient, stay as separate lines.
      */
     public void consolidate() {
@@ -47,6 +49,28 @@ public class ShoppingList {
             }
             items.add(new ShoppingItem(first.getIngredient(), quantity, unit));
         }
+    }
+
+    /**
+     * Rounds up the quantities of all items in the shopping list that are in the
+     * COUNT family.
+     * 
+     * @return true if any quantities were rounded up, false otherwise
+     */
+    public boolean roundUpQuantities() {
+        boolean rounded = false;
+        for (int i = 0; i < items.size(); i++) {
+            ShoppingItem item = items.get(i);
+            if (Units.family(item.getUnit()) == Units.Family.COUNT) {
+                double quantity = item.getQuantity();
+                double whole = Math.ceil(quantity - 1e-9); // the 1e-9 keeps 3.0000000001 at 3, not 4
+                if (Math.abs(whole - quantity) > 1e-9) {
+                    rounded = true;
+                }
+                items.set(i, new ShoppingItem(item.getIngredient(), whole, item.getUnit()));
+            }
+        }
+        return rounded;
     }
 
     public List<ShoppingItem> getItems() {

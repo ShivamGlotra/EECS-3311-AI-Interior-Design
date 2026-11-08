@@ -55,13 +55,13 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 /**
- * The AI Assistant tab: F04 recommendations, F05 weekly plan, F06 edit and undo, and the plan's
+ * The AI Assistant tab: F04 recommendations, F05 weekly plan, F06 edit and
+ * undo, and the plan's
  * F09 nutrition and F10 shopping list. Calls only SmartRecipeFacade.
  */
 public class AssistantPanel extends JPanel {
 
-    static final String DEFAULT_REQUEST =
-            "Plan dinners for this week, use some of my pantry items, avoid mushrooms, keep meals under 30 minutes";
+    static final String DEFAULT_REQUEST = "Plan dinners for this week, use some of my pantry items, avoid mushrooms, keep meals under 30 minutes";
     static final String NOTHING_SENT = "Nothing was sent to the AI — the request was rejected before planning started.";
     static final String NO_REQUEST_YET = "No AI request yet. Type a request above and choose an action.";
 
@@ -82,8 +82,8 @@ public class AssistantPanel extends JPanel {
     private final JButton nutritionButton = Ui.secondary("Plan nutrition");
     private final JButton shoppingButton = Ui.secondary("Shopping list");
 
-    private final DefaultTableModel planModel =
-            Ui.readOnlyModel("DAY", "RECIPE", "ID", "SERVINGS", "MINUTES", "KCAL / SERVING");
+    private final DefaultTableModel planModel = Ui.readOnlyModel("DAY", "RECIPE", "ID", "SERVINGS", "MINUTES",
+            "KCAL / SERVING");
     private final JTable planTable = Ui.table(planModel);
     private final JLabel planSubtitle = Ui.muted(" ");
     private final CardLayout planCards = new CardLayout();
@@ -106,6 +106,8 @@ public class AssistantPanel extends JPanel {
 
     private String changedDay;
     private boolean busy;
+    private Consumer<Boolean> busyListener = value -> {
+    };
 
     public AssistantPanel(SmartRecipeFacade facade) {
         this(facade, TaskRunner.background());
@@ -164,7 +166,7 @@ public class AssistantPanel extends JPanel {
         for (int i = 0; i < planModel.getColumnCount(); i++) {
             planTable.getColumnModel().getColumn(i).setCellRenderer(renderer);
         }
-        int[] widths = {110, 320, 70, 90, 90, 130};
+        int[] widths = { 110, 320, 70, 90, 90, 130 };
         for (int i = 0; i < widths.length; i++) {
             planTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
         }
@@ -191,15 +193,16 @@ public class AssistantPanel extends JPanel {
         JPanel content = Ui.stack();
         JLabel icon = new JLabel(Icons.calendar(56, Theme.TEXT_DISABLED));
         JLabel title = Ui.heading("No meal plan yet", 17f);
-        JLabel text = new JLabel("<html><div style='text-align:center; width:360px'>Describe the week you want, then press "
-                + "<b>Create weekly plan</b>. Plans have 5 to 7 dinners, one per day.</div></html>");
+        JLabel text = new JLabel(
+                "<html><div style='text-align:center; width:360px'>Describe the week you want, then press "
+                        + "<b>Create weekly plan</b>. Plans have 5 to 7 dinners, one per day.</div></html>");
         text.setFont(Theme.regular(14f));
         text.setForeground(Theme.TEXT_MUTED);
         JPanel chips = Ui.row(8,
                 exampleChip("Weekday dinners, under 30 minutes"),
                 exampleChip("7 vegetarian dinners using my pantry"),
                 exampleChip("6 dinners for 4 people"));
-        for (JComponent c : new JComponent[]{icon, title, text, chips}) {
+        for (JComponent c : new JComponent[] { icon, title, text, chips }) {
             c.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
         content.add(icon);
@@ -366,7 +369,10 @@ public class AssistantPanel extends JPanel {
         showSide(SIDE_RESULTS);
     }
 
-    /** Runs an AI request off the Swing thread, then shows the result and the agent trace. */
+    /**
+     * Runs an AI request off the Swing thread, then shows the result and the agent
+     * trace.
+     */
     private <T> void runAI(String text, Callable<T> task, Consumer<T> onSuccess) {
         setBusy(true);
         showSide(SIDE_RESULTS);
@@ -400,7 +406,10 @@ public class AssistantPanel extends JPanel {
         return text;
     }
 
-    /** Shows the agent's steps, numbered. Only trusts a trace that belongs to this request. */
+    /**
+     * Shows the agent's steps, numbered. Only trusts a trace that belongs to this
+     * request.
+     */
     private void showTrace(String text, boolean failed) {
         List<String> steps = facade.getLastAgentTrace();
         boolean fresh = !steps.isEmpty() && steps.get(0).contains("\"" + text + "\"");
@@ -425,9 +434,19 @@ public class AssistantPanel extends JPanel {
 
     // ================================================================== state
 
+    /**
+     * Tells the window when an AI request starts and ends, so it can lock the model
+     * and strategy boxes.
+     */
+    public void onBusyChange(Consumer<Boolean> listener) {
+        busyListener = listener == null ? value -> {
+        } : listener;
+    }
+
     private void setBusy(boolean value) {
         busy = value;
         updateButtons();
+        busyListener.accept(value);
         setCursor(value ? java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR) : null);
     }
 
@@ -441,7 +460,10 @@ public class AssistantPanel extends JPanel {
         shoppingButton.setEnabled(hasPlan);
     }
 
-    /** Re-reads the current plan from the facade into the table (or the empty state). */
+    /**
+     * Re-reads the current plan from the facade into the table (or the empty
+     * state).
+     */
     public void refreshPlan() {
         MealPlan plan = facade.getCurrentPlan();
         planModel.setRowCount(0);
@@ -455,8 +477,8 @@ public class AssistantPanel extends JPanel {
             for (PlannedMeal meal : plan.getMeals()) {
                 Recipe r = meal.getRecipe();
                 NutritionInfo n = r.getNutritionPerServing();
-                planModel.addRow(new Object[]{meal.getDay(), r.getName(), r.getId(), meal.getServings(),
-                        meal.getCookingTime(), n == null ? "—" : String.format(Locale.ROOT, "%.0f", n.getCalories())});
+                planModel.addRow(new Object[] { meal.getDay(), r.getName(), r.getId(), meal.getServings(),
+                        meal.getCookingTime(), n == null ? "—" : String.format(Locale.ROOT, "%.0f", n.getCalories()) });
             }
             planCards.show(planBody, PLAN_TABLE);
             int servings = plan.getMeals().get(0).getServings();
@@ -501,7 +523,8 @@ public class AssistantPanel extends JPanel {
         return null;
     }
 
-    // ================================================================== F10 shopping list
+    // ================================================================== F10
+    // shopping list
 
     private boolean loadShoppingList() {
         ShoppingList list;
@@ -539,7 +562,8 @@ public class AssistantPanel extends JPanel {
         }
         shoppingSubtitle.setText(list.getItems().size() + " items · pantry subtracted");
         shoppingCovered.setText(covered.isEmpty() ? " "
-                : "<html><div style='width:340px'>Covered by your pantry: " + String.join(", ", covered) + "</div></html>");
+                : "<html><div style='width:340px'>Covered by your pantry: " + String.join(", ", covered)
+                        + "</div></html>");
         shoppingText = text.toString();
         shoppingRows.revalidate();
         shoppingRows.repaint();
@@ -587,7 +611,8 @@ public class AssistantPanel extends JPanel {
         }
     }
 
-    // ================================================================== F09 plan nutrition
+    // ================================================================== F09 plan
+    // nutrition
 
     private boolean loadNutrition() {
         NutritionInfo total;
@@ -657,7 +682,8 @@ public class AssistantPanel extends JPanel {
                 int h = 8;
                 int y = (getHeight() - h) / 2;
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                        java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(Theme.ROW_LINE);
                 g2.fillRoundRect(0, y, getWidth(), h, h, h);
                 g2.setColor(Theme.ACCENT);
@@ -671,7 +697,8 @@ public class AssistantPanel extends JPanel {
         return row;
     }
 
-    // ================================================================== small views
+    // ================================================================== small
+    // views
 
     private JComponent recipeRow(Recipe r) {
         JPanel row = Ui.stack();
@@ -727,13 +754,16 @@ public class AssistantPanel extends JPanel {
         return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
-    /** Renders the plan table: padding, monospace ids, and a tinted "CHANGED" row after an edit. */
+    /**
+     * Renders the plan table: padding, monospace ids, and a tinted "CHANGED" row
+     * after an edit.
+     */
     private final class PlanRenderer extends DefaultTableCellRenderer {
         private final JLabel changedTag = Ui.pill("CHANGED", Theme.ACCENT, Color.WHITE);
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean selected,
-                                                       boolean focus, int row, int column) {
+                boolean focus, int row, int column) {
             JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, selected, false, row, column);
             boolean changed = changedDay != null && changedDay.equals(planModel.getValueAt(row, 0));
             Color bg = changed || selected ? Theme.ACCENT_TINT : Theme.SURFACE;
@@ -759,7 +789,8 @@ public class AssistantPanel extends JPanel {
         }
     }
 
-    // ================================================================== accessors for tests
+    // ================================================================== accessors
+    // for tests
 
     JTextField requestField() {
         return request;

@@ -1,6 +1,7 @@
 package com.smartplate.agent;
 
 import com.smartplate.TestData;
+import com.smartplate.ai.AIModel;
 import com.smartplate.ai.AIServiceException;
 import com.smartplate.ai.MockAIModel;
 import com.smartplate.command.Command;
@@ -47,6 +48,31 @@ class MealPlanningAgentTest {
     }
 
     @Test
+    void aRequestKeepsTheAIModelItStartedWithIfTheUserSwitchesMidway() {
+        MockAIModel second = MockAIModel.scripted("RECIPES: r11, r17");
+        MockAIModel answers = MockAIModel.scripted("RECIPES: r04, r999", "RECIPES: r09, r02");
+        MealPlanningAgent[] agent = new MealPlanningAgent[1];
+        AIModel first = new AIModel() {
+            @Override
+            public String generate(String prompt) {
+                agent[0].setAIModel(second); // the user picks another model while the request runs
+                return answers.generate(prompt);
+            }
+
+            @Override
+            public String getName() {
+                return "first model";
+            }
+        };
+        agent[0] = new MealPlanningAgent(first, repo, new ConstraintValidator(), new PantryFirstStrategy());
+
+        List<Recipe> recs = agent[0].recommend("2 dinners", vegetarian, new Pantry());
+        assertEquals(List.of(repo.findById("r09"), repo.findById("r02")), recs); // revision came from the first model
+        assertTrue(second.getPrompts().isEmpty());
+        assertEquals(second, agent[0].getAIModel()); // the switch applies to the next request
+    }
+
+    @Test
     void recommendRevisesOnceWithViolationMessages() {
         // first answer contains a meat dish and an invented id
         MockAIModel ai = MockAIModel.scripted("RECIPES: r04, r999", "RECIPES: r09, r02");
@@ -71,11 +97,13 @@ class MealPlanningAgentTest {
 
     @Test
     void dietInTheRequestIsEnforcedEvenIfNotInTheProfile() {
-        // the AI suggests a non-vegan dish twice; the request said vegan, so it must be rejected
+        // the AI suggests a non-vegan dish twice; the request said vegan, so it must be
+        // rejected
         MockAIModel ai = MockAIModel.scripted("RECIPES: r13", "RECIPES: r13");
         assertThrows(SmartPlateException.class,
                 () -> agent(ai).recommend("1 vegan dinner", TestData.noRestrictions(), new Pantry()));
-        for (Recipe r : agent(new MockAIModel()).recommend("2 vegan dinners", TestData.noRestrictions(), new Pantry())) {
+        for (Recipe r : agent(new MockAIModel()).recommend("2 vegan dinners", TestData.noRestrictions(),
+                new Pantry())) {
             assertTrue(r.hasTag("vegan"), r.getName());
         }
     }
@@ -166,8 +194,8 @@ class MealPlanningAgentTest {
 
     private MealPlan fiveDayPlan() {
         MealPlan plan = new MealPlan();
-        String[] ids = {"r09", "r01", "r02", "r11", "r17"};
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        String[] ids = { "r09", "r01", "r02", "r11", "r17" };
+        String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
         for (int i = 0; i < 5; i++) {
             plan.addMeal(new PlannedMeal(days[i], repo.findById(ids[i]), 2));
         }
@@ -206,6 +234,15 @@ class MealPlanningAgentTest {
         MealPlan plan = fiveDayPlan();
         Command command = agent(MockAIModel.scripted("DAY: Wednesday\nRECIPE: r03"))
                 .editPlan("replace the curry with pasta", plan, vegetarian, new Pantry());
+        command.execute();
+        assertEquals("r03", plan.getMeal("Wednesday").getRecipe().getId());
+    }
+
+    @Test
+    void editPlanDoesNotMistakeSundriedForSunday() {
+        MealPlan plan = fiveDayPlan(); // Monday - Friday so a wrong "Sunday" should throw an exception
+        Command command = agent(MockAIModel.scripted("DAY: Wednesday\nRECIPE: r03"))
+                .editPlan("replace the sun-dried tomato pasta with something else", plan, vegetarian, new Pantry());
         command.execute();
         assertEquals("r03", plan.getMeal("Wednesday").getRecipe().getId());
     }

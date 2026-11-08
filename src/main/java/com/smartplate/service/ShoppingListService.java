@@ -11,7 +11,8 @@ import com.smartplate.plan.PlanComponent;
 
 /**
  * F10: builds the shopping list for a plan. Collects ingredients through
- * PlanComponent.getIngredients() (Composite), merges duplicates, subtracts what is in the
+ * PlanComponent.getIngredients() (Composite), merges duplicates, subtracts what
+ * is in the
  * pantry, and keeps only what is missing.
  */
 public class ShoppingListService {
@@ -49,11 +50,15 @@ public class ShoppingListService {
                 double missing = Units.toBase(item.getQuantity(), item.getUnit())
                         - Units.toBase(have.getQuantity(), have.getUnit());
                 if (missing > 1e-9) {
-                    result.addItem(new ShoppingItem(item.getIngredient(), missing, Units.baseUnit(Units.family(item.getUnit()))));
+                    result.addItem(new ShoppingItem(item.getIngredient(), missing,
+                            Units.baseUnit(Units.family(item.getUnit()))));
                 }
             }
         }
         result.consolidate();
+        if (result.roundUpQuantities()) {
+            result.addNote("Counted items (pcs) have been rounded up to the next whole number.");
+        }
         return result;
     }
 }

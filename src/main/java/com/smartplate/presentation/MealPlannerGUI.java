@@ -30,9 +30,12 @@ import java.awt.GraphicsEnvironment;
 import java.util.Map;
 
 /**
- * Swing desktop interface ("Clean Slate" design, light mode). Like the CLI it calls only
- * SmartRecipeFacade; each tab is its own panel in {@code com.smartplate.presentation.gui}:
- * AI Assistant (F04–F06, F09/F10 for the plan), Recipes (F03, F07–F09), Pantry (F02) and
+ * Swing desktop interface ("Clean Slate" design, light mode). Like the CLI it
+ * calls only
+ * SmartRecipeFacade; each tab is its own panel in
+ * {@code com.smartplate.presentation.gui}:
+ * AI Assistant (F04–F06, F09/F10 for the plan), Recipes (F03, F07–F09), Pantry
+ * (F02) and
  * Preferences (F01).
  */
 public class MealPlannerGUI {
@@ -62,7 +65,10 @@ public class MealPlannerGUI {
         });
     }
 
-    /** The whole window content: a tab bar with the logo, the four tabs, the strategy and AI model switchers. */
+    /**
+     * The whole window content: a tab bar with the logo, the four tabs, the
+     * strategy and AI model switchers.
+     */
     public JComponent buildContent() {
         Theme.install();
         AssistantPanel assistant = new AssistantPanel(facade);
@@ -79,9 +85,10 @@ public class MealPlannerGUI {
         tabs.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_AREA_ALIGNMENT,
                 FlatClientProperties.TABBED_PANE_ALIGN_LEADING);
         tabs.putClientProperty(FlatClientProperties.TABBED_PANE_LEADING_COMPONENT, logo());
-        tabs.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, statusArea());
+        tabs.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, statusArea(assistant));
         tabs.addChangeListener(e -> {
-            // other tabs may have changed the pantry or profile; re-read them from the facade
+            // other tabs may have changed the pantry or profile; re-read them from the
+            // facade
             if (tabs.getSelectedComponent() == pantry) {
                 pantry.refresh();
             } else if (tabs.getSelectedComponent() == preferences) {
@@ -108,10 +115,13 @@ public class MealPlannerGUI {
         return logo;
     }
 
-    /** Strategy selector (Strategy pattern) and AI model selector (Adapter pattern), both switchable at run time. */
-    private JComponent statusArea() {
+    /**
+     * Strategy selector (Strategy pattern) and AI model selector (Adapter pattern),
+     * both switchable at run time.
+     */
+    private JComponent statusArea(AssistantPanel assistant) {
         JLabel label = Ui.fieldLabel("Strategy");
-        JComboBox<String> strategy = new JComboBox<>(new String[]{"pantry-first", "fastest"});
+        JComboBox<String> strategy = new JComboBox<>(new String[] { "pantry-first", "fastest" });
         strategy.setSelectedItem(facade.getStrategyName());
         strategy.setToolTipText("How candidate recipes are shortlisted before the AI chooses");
         label.setLabelFor(strategy);
@@ -125,6 +135,12 @@ public class MealPlannerGUI {
         JLabel modelLabel = Ui.fieldLabel("AI model");
         JComboBox<String> model = modelSwitcher();
         modelLabel.setLabelFor(model);
+        // while an AI request runs, the model and the strategy stay as they were when
+        // it started
+        assistant.onBusyChange(busy -> {
+            strategy.setEnabled(!busy);
+            model.setEnabled(!busy);
+        });
         JPanel area = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         area.setOpaque(false);
         area.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -143,8 +159,10 @@ public class MealPlannerGUI {
     }
 
     /**
-     * Lists the providers (Mock, Claude, Gemini, Ollama). Choosing one asks the facade to switch;
-     * if that fails (e.g. no API key in .env) the previous choice comes back and the reason is shown.
+     * Lists the providers (Mock, Claude, Gemini, Ollama). Choosing one asks the
+     * facade to switch;
+     * if that fails (e.g. no API key in .env) the previous choice comes back and
+     * the reason is shown.
      * The closed box shows the exact model in use, e.g. "Ollama (gemma4:e4b)".
      */
     private JComboBox<String> modelSwitcher() {
@@ -154,9 +172,11 @@ public class MealPlannerGUI {
         model.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean selected, boolean focus) {
-                // index -1 is the closed box: show the exact model; the open list shows provider names
-                String text = index < 0 ? modelDisplayName() : PROVIDER_LABELS.getOrDefault(value, String.valueOf(value));
+                    boolean selected, boolean focus) {
+                // index -1 is the closed box: show the exact model; the open list shows
+                // provider names
+                String text = index < 0 ? modelDisplayName()
+                        : PROVIDER_LABELS.getOrDefault(value, String.valueOf(value));
                 return super.getListCellRendererComponent(list, text, index, selected, focus);
             }
         });
@@ -188,7 +208,10 @@ public class MealPlannerGUI {
         return model;
     }
 
-    /** Swing caches the box width; a new prototype value makes it measure the current model name again. */
+    /**
+     * Swing caches the box width; a new prototype value makes it measure the
+     * current model name again.
+     */
     private void fitToModelName(JComboBox<String> model) {
         model.setPrototypeDisplayValue(new String(facade.getAIModelName())); // new instance: always a change
         model.revalidate();

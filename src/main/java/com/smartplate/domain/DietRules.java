@@ -1,5 +1,6 @@
 package com.smartplate.domain;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -7,12 +8,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Ingredient-level rules shared by ConstraintValidator, SubstitutionService and the
- * selection strategies. Checks one ingredient against a profile's allergies, dislikes
- * and dietary preferences by looking at the ingredient's name and category, not at a
- * recipe's tags (report F04: "inspects each recipe's ingredient list, not just its tags").
+ * Ingredient-level rules shared by ConstraintValidator, SubstitutionService and
+ * the
+ * selection strategies. Checks one ingredient against a profile's allergies,
+ * dislikes
+ * and dietary preferences by looking at the ingredient's name and category, not
+ * at a
+ * recipe's tags (report F04: "inspects each recipe's ingredient list, not just
+ * its tags").
  */
 public final class DietRules {
+
+    private static final Set<String> DAIRY_WORDS = Set.of("milk", "butter", "cream", "yogurt", "cheese");
 
     /** Allergy/avoid terms that stand for a whole group of ingredients. */
     private static final Map<String, Set<String>> GROUP_NAMES = Map.of(
@@ -36,7 +43,18 @@ public final class DietRules {
     private DietRules() {
     }
 
-    /** Returns the reasons this ingredient conflicts with the profile (empty if none). */
+    /**
+     * "jalapeño" -> "jalapeno", "crème" -> "creme", so accented and plain spellings
+     * match.
+     */
+    static String withoutAccents(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+    }
+
+    /**
+     * Returns the reasons this ingredient conflicts with the profile (empty if
+     * none).
+     */
     public static List<String> conflicts(Ingredient ingredient, UserProfile profile) {
         List<String> reasons = new ArrayList<>();
         for (String allergy : profile.getAllergies()) {
@@ -45,7 +63,7 @@ public final class DietRules {
             }
         }
         for (String dislike : profile.getDislikedIngredients()) {
-            if (matches(ingredient, dislike)) {
+            if (matchesDislike(ingredient, dislike)) {
                 reasons.add("contains " + ingredient.getName() + " (disliked: " + dislike + ")");
             }
         }
@@ -57,7 +75,10 @@ public final class DietRules {
         return reasons;
     }
 
-    /** True if the ingredient falls under an allergy/dislike term such as "peanuts" or "gluten". */
+    /**
+     * True if the ingredient falls under an allergy/dislike term such as "peanuts"
+     * or "gluten".
+     */
     public static boolean matches(Ingredient ingredient, String term) {
         String stem = singular(term);
         if (stem.isEmpty()) {
@@ -82,6 +103,15 @@ public final class DietRules {
         return category.equals(stem) || containsWord(name, stem);
     }
 
+    public static boolean matchesDislike(Ingredient ingredient, String term) {
+        String stem = singular(term);
+        if (DAIRY_WORDS.contains(stem) && !ingredient.getCategory().equals("dairy")
+                && !ingredient.getName().equals(stem)) {
+            return false;
+        }
+        return matches(ingredient, term);
+    }
+
     /** True if the ingredient is not allowed by this dietary preference. */
     public static boolean violatesDiet(Ingredient ingredient, String diet) {
         String category = ingredient.getCategory();
@@ -102,9 +132,12 @@ public final class DietRules {
         }
     }
 
-    /** Naive singular form: "mushrooms" -> "mushroom", "tomatoes" -> "tomato", "berries" -> "berry". */
+    /**
+     * Naive singular form: "mushrooms" -> "mushroom", "tomatoes" -> "tomato",
+     * "berries" -> "berry".
+     */
     public static String singular(String term) {
-        String t = term == null ? "" : term.trim().toLowerCase(Locale.ROOT);
+        String t = withoutAccents(term == null ? "" : term.trim().toLowerCase(Locale.ROOT));
         if (t.endsWith("ies") && t.length() > 4) {
             return t.substring(0, t.length() - 3) + "y";
         }
@@ -129,8 +162,10 @@ public final class DietRules {
             int end = i + word.length();
             // allow a plural "s"/"es" after the word, e.g. "egg" in "eggs"
             boolean endOk = end == text.length() || !Character.isLetter(text.charAt(end))
-                    || text.startsWith("s", end) && (end + 1 == text.length() || !Character.isLetter(text.charAt(end + 1)))
-                    || text.startsWith("es", end) && (end + 2 == text.length() || !Character.isLetter(text.charAt(end + 2)));
+                    || text.startsWith("s", end)
+                            && (end + 1 == text.length() || !Character.isLetter(text.charAt(end + 1)))
+                    || text.startsWith("es", end)
+                            && (end + 2 == text.length() || !Character.isLetter(text.charAt(end + 2)));
             if (startOk && endOk) {
                 return true;
             }

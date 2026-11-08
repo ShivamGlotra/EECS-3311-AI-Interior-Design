@@ -1,0 +1,31 @@
+{
+    // Run and Debug configurations (F5). Unlike tasks, these stop at breakpoints.
+    // Needs the "Extension Pack for Java". The app reads .env from the project folder.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "SmartPlate: app",
+            "request": "launch",
+            "mainClass": "com.smartplate.app.SmartPlateApp",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "java",
+            "name": "SmartPlate: CLI",
+            "request": "launch",
+            "mainClass": "com.smartplate.app.SmartPlateApp",
+            "args": "--cli",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "SmartPlate: app with mock AI",
+            "request": "launch",
+            "mainClass": "com.smartplate.app.SmartPlateApp",
+            "args": "--mock",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

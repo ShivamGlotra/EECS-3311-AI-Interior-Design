@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text></help_text><element><id>Text</id><coordinates><x>0</x><y>0</y><w>1200</w><h>50</h></coordinates><panel_attributes>SmartPlate - class diagram of the implemented system (Stage 2)
+Blue = added during implementation (not in the Stage 1 diagram)
+fontsize=16
+halign=left</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1891</x><y>65</y><w>915</w><h>644</h></coordinates><panel_attributes>presentation
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1900</x><y>252</y><w>894</w><h>448</h></coordinates><panel_attributes>gui
+bg=#f7f8fa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>2793</x><y>421</y><w>446</w><h>447</h></coordinates><panel_attributes>facade
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>491</x><y>889</y><w>777</w><h>610</h></coordinates><panel_attributes>agent
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1257</x><y>1155</y><w>1072</w><h>642</h></coordinates><panel_attributes>ai
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>16</x><y>1174</y><w>484</w><h>307</h></coordinates><panel_attributes>strategy
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>3761</x><y>934</y><w>249</w><h>574</h></coordinates><panel_attributes>command
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>3300</x><y>1357</y><w>393</w><h>450</h></coordinates><panel_attributes>plan
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>2320</x><y>1159</y><w>990</w><h>322</h></coordinates><panel_attributes>service
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>2448</x><y>1829</y><w>1714</w><h>338</h></coordinates><panel_attributes>domain
+bg=#fafafa</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2271</x><y>95</y><w>307</w><h>127</h></coordinates><panel_attributes>MealPlannerGUI
+--
++start()
++buildContent() : JComponent
+-statusArea(assistant) : JComponent
+-modelSwitcher() : JComboBox
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1900</x><y>122</y><w>147</w><h>72</h></coordinates><panel_attributes>MealPlannerCLI
+--
++runLoop()
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2218</x><y>282</y><w>410</w><h>109</h></coordinates><panel_attributes>AssistantPanel
+--
++createPlan() / recommend() / editPlan() / undo()
++onBusyChange(listener)
++refreshPlan()
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2641</x><y>309</y><w>133</w><h>54</h></coordinates><panel_attributes>RecipesPanel
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1908</x><y>309</y><w>124</w><h>54</h></coordinates><panel_attributes>PantryPanel
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2045</x><y>309</y><w>161</w><h>54</h></coordinates><panel_attributes>PreferencesPanel
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2283</x><y>619</y><w>282</w><h>78</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+TaskRunner
+--
++run(task, onSuccess, onFailure)
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2802</x><y>451</y><w>417</w><h>407</h></coordinates><panel_attributes>&lt;&lt;Facade&gt;&gt;
+SmartRecipeFacade
+--
+-profile : UserProfile
+-pantry : Pantry
+-currentPlan : MealPlan
+--
++setupProfile(profile) : UserProfile
++managePantry(action, item) : Pantry
++searchRecipes(query) : List&lt;Recipe&gt;
++recommendRecipes(request) : List&lt;Recipe&gt;
++createMealPlan(request) : MealPlan
++editMealPlan(request) : MealPlan
++undoLastChange() : MealPlan
++adjustServings(recipe, servings) : Recipe
++substituteIngredient(recipe, ingredient) : Recipe
++calculateRecipeNutrition(recipe) : NutritionInfo
++calculatePlanNutrition() : NutritionInfo
++generateShoppingList() : ShoppingList
++setStrategy(name)
++setAIProvider(provider)
++getAIProviders() : List&lt;String&gt;
++getLastAgentTrace() : List&lt;String&gt;
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>802</x><y>919</y><w>444</w><h>222</h></coordinates><panel_attributes>&lt;&lt;Strategy context&gt;&gt;
+&lt;&lt;Adapter client&gt;&gt;
+MealPlanningAgent
+--
+-aiModel : AIModel
+-strategy : RecipeSelectionStrategy
+--
++recommend(request, profile, pantry) : List&lt;Recipe&gt;
++createPlan(request, profile, pantry) : MealPlan
++editPlan(request, plan, profile, pantry) : Command
++setStrategy(strategy)
++setAIModel(model)
++getLastTrace() : List&lt;String&gt;
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>832</x><y>1198</y><w>416</w><h>90</h></coordinates><panel_attributes>ConstraintValidator
+--
++validateRecipe(recipe, profile) : ValidationResult
++validatePlan(plan, profile) : ValidationResult
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1028</x><y>1400</y><w>219</w><h>94</h></coordinates><panel_attributes>ValidationResult
+--
+-violations : List&lt;String&gt;
+--
++isValid() : boolean
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>500</x><y>1180</y><w>320</w><h>127</h></coordinates><panel_attributes>RequestConstraints
+--
++parse(request) : RequestConstraints
++planDays() : int
++getAvoid() : List&lt;String&gt;
++applyTo(profile) : UserProfile
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1567</x><y>1396</y><w>301</w><h>110</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+&lt;&lt;Adapter target&gt;&gt;
+AIModel
+--
++generate(prompt : String) : String
++getName() : String
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1266</x><y>1563</y><w>237</w><h>79</h></coordinates><panel_attributes>&lt;&lt;Adapter&gt;&gt;
+AIAdapter
+--
++generate(prompt) : String
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1266</x><y>1710</y><w>413</w><h>79</h></coordinates><panel_attributes>&lt;&lt;Adaptee&gt;&gt;
+AIClient
+--
++sendRequest(MessageCreateParams) : Message
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1516</x><y>1563</y><w>237</w><h>79</h></coordinates><panel_attributes>&lt;&lt;Adapter&gt;&gt;
+GeminiAdapter
+--
++generate(prompt) : String
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1766</x><y>1563</y><w>237</w><h>79</h></coordinates><panel_attributes>&lt;&lt;Adapter&gt;&gt;
+OllamaAdapter
+--
++generate(prompt) : String
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2015</x><y>1556</y><w>294</w><h>90</h></coordinates><panel_attributes>MockAIModel
+--
++generate(prompt) : String
++scripted(answers) : MockAIModel
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1952</x><y>1186</y><w>330</w><h>115</h></coordinates><panel_attributes>&lt;&lt;Factory&gt;&gt;
+AIModelFactory
+--
++create(env) : AIModel
++forProvider(provider, env) : AIModel
++missingSetting(provider, env) : String
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1987</x><y>1409</y><w>259</w><h>72</h></coordinates><panel_attributes>EnvFile
+--
++load() : Map&lt;String, String&gt;
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1301</x><y>1207</y><w>212</w><h>72</h></coordinates><panel_attributes>PromptFormat
+--
++field(text, key) : String
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>25</x><y>1204</y><w>455</w><h>94</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+&lt;&lt;Strategy&gt;&gt;
+RecipeSelectionStrategy
+--
++selectRecipes(recipes, profile, pantry) : List&lt;Recipe&gt;
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>38</x><y>1418</y><w>176</w><h>54</h></coordinates><panel_attributes>PantryFirstStrategy
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>234</x><y>1418</y><w>183</w><h>54</h></coordinates><panel_attributes>FastestMealStrategy
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3845</x><y>1195</y><w>145</w><h>110</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+&lt;&lt;Command&gt;&gt;
+Command
+--
++execute()
++undo()
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3770</x><y>1391</y><w>212</w><h>109</h></coordinates><panel_attributes>ReplaceMealCommand
+--
+-day : String
+-oldMeal : PlannedMeal
+-newMeal : PlannedMeal
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3779</x><y>964</y><w>194</w><h>115</h></coordinates><panel_attributes>&lt;&lt;Invoker&gt;&gt;
+CommandHistory
+--
++execute(command)
++undo() : Command
++canUndo() : boolean
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3308</x><y>1387</y><w>364</w><h>126</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+&lt;&lt;Component&gt;&gt;
+PlanComponent
+--
++getNutrition() : NutritionInfo
++getIngredients() : List&lt;RecipeIngredient&gt;
++getCookingTime() : int
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3419</x><y>1544</y><w>254</w><h>115</h></coordinates><panel_attributes>&lt;&lt;Composite&gt;&gt;
+MealPlan
+--
++addMeal(meal)
++replaceMeal(day, meal)
++getMeal(day) : PlannedMeal
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3311</x><y>1701</y><w>130</w><h>97</h></coordinates><panel_attributes>&lt;&lt;Leaf&gt;&gt;
+PlannedMeal
+--
+-day : String
+-servings : int
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3454</x><y>1704</y><w>218</w><h>90</h></coordinates><panel_attributes>Days
+--
++normalize(text) : String
++findIn(text) : String
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2329</x><y>1189</y><w>267</w><h>109</h></coordinates><panel_attributes>RecipeRepository
+--
++search(query) : List&lt;Recipe&gt;
++findById(id) : Recipe
++findAll() : List&lt;Recipe&gt;
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2608</x><y>1216</y><w>152</w><h>54</h></coordinates><panel_attributes>NutritionService
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2773</x><y>1216</y><w>137</w><h>54</h></coordinates><panel_attributes>ServingScaler
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2922</x><y>1216</y><w>175</w><h>54</h></coordinates><panel_attributes>SubstitutionService
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3109</x><y>1216</y><w>181</w><h>54</h></coordinates><panel_attributes>ShoppingListService
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2762</x><y>1418</y><w>126</w><h>54</h></coordinates><panel_attributes>SampleData
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3507</x><y>1868</y><w>528</w><h>90</h></coordinates><panel_attributes>UserProfile
+--
++validate() : List&lt;String&gt;
++withRequestConstraints(diets, dislikes, maxTime) : UserProfile
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>4055</x><y>1886</y><w>87</w><h>54</h></coordinates><panel_attributes>Pantry
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3594</x><y>2009</y><w>118</w><h>54</h></coordinates><panel_attributes>PantryItem
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3320</x><y>1859</y><w>167</w><h>110</h></coordinates><panel_attributes>&lt;&lt;enumeration&gt;&gt;
+PantryAction
+--
+ADD
+UPDATE
+REMOVE
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2933</x><y>1886</y><w>89</w><h>54</h></coordinates><panel_attributes>Recipe
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2899</x><y>2009</y><w>159</w><h>54</h></coordinates><panel_attributes>RecipeIngredient
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3487</x><y>2104</y><w>113</w><h>54</h></coordinates><panel_attributes>Ingredient
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3078</x><y>2009</y><w>128</w><h>54</h></coordinates><panel_attributes>NutritionInfo
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3035</x><y>1868</y><w>273</w><h>90</h></coordinates><panel_attributes>ShoppingList
+--
++consolidate()
++roundUpQuantities() : boolean
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3366</x><y>2009</y><w>138</w><h>54</h></coordinates><panel_attributes>ShoppingItem
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>3843</x><y>2009</y><w>125</w><h>54</h></coordinates><panel_attributes>Substitution
+bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2549</x><y>1868</y><w>372</w><h>90</h></coordinates><panel_attributes>DietRules
+--
++conflicts(ingredient, profile) : List&lt;String&gt;
++matchesDislike(ingredient, term) : boolean
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2458</x><y>1886</y><w>78</w><h>54</h></coordinates><panel_attributes>Units
+bg=#e3f2fd</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>2558</x><y>160</y><w>380</w><h>295</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;121;33;222;92;311;177;370;285</additional_attributes></element><element><id>Relation</id><coordinates><x>1853</x><y>184</y><w>983</w><h>273</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>79;10;57;36;42;68;10;144;42;206;479;229;927;237;951;248;973;263</additional_attributes></element><element><id>Relation</id><coordinates><x>2409</x><y>225</y><w>20</w><h>67</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;34;10;57</additional_attributes></element><element><id>Relation</id><coordinates><x>2570</x><y>211</y><w>125</w><h>108</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;36;24;60;41;92;68;115;98</additional_attributes></element><element><id>Relation</id><coordinates><x>1972</x><y>164</y><w>295</w><h>155</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>285;10;172;33;63;88;31;114;10;145</additional_attributes></element><element><id>Relation</id><coordinates><x>2133</x><y>212</y><w>135</w><h>107</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>125;10;99;23;75;40;39;67;10;97</additional_attributes></element><element><id>Relation</id><coordinates><x>2610</x><y>378</y><w>261</w><h>78</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;16;11;21;12;115;10;201;33;228;48;251;68</additional_attributes></element><element><id>Relation</id><coordinates><x>2409</x><y>381</y><w>20</w><h>241</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;10;125;10;231</additional_attributes></element><element><id>Relation</id><coordinates><x>1235</x><y>847</y><w>1577</w><h>152</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>1567;10;1556;16;1545;21;1291;31;1035;32;466;82;10;142</additional_attributes></element><element><id>Relation</id><coordinates><x>3198</x><y>731</y><w>585</w><h>258</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;315;139;575;248</additional_attributes></element><element><id>Relation</id><coordinates><x>2483</x><y>842</y><w>329</w><h>351</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>319;10;308;18;297;26;275;36;253;47;100;200;10;341</additional_attributes></element><element><id>Relation</id><coordinates><x>2686</x><y>849</y><w>208</w><h>371</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>198;10;190;25;181;40;77;232;10;361</additional_attributes></element><element><id>Relation</id><coordinates><x>2836</x><y>849</y><w>121</w><h>371</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>111;10;50;221;10;361</additional_attributes></element><element><id>Relation</id><coordinates><x>2995</x><y>849</y><w>20</w><h>370</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;10;221;10;360</additional_attributes></element><element><id>Relation</id><coordinates><x>3061</x><y>849</y><w>134</w><h>371</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;78;221;124;361</additional_attributes></element><element><id>Relation</id><coordinates><x>2137</x><y>847</y><w>675</w><h>343</h></coordinates><panel_attributes>lt=.&gt;
+switch model</panel_attributes><additional_attributes>665;10;654;16;643;21;465;30;289;42;107;178;10;333</additional_attributes></element><element><id>Relation</id><coordinates><x>3198</x><y>678</y><w>865</w><h>1197</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;372;77;796;201;855;249;850;343;850;1073;806;1136;720;1187</additional_attributes></element><element><id>Relation</id><coordinates><x>3198</x><y>666</y><w>919</w><h>1224</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;505;76;851;223;894;279;892;355;892;1015;880;1131;909;1214</additional_attributes></element><element><id>Relation</id><coordinates><x>3198</x><y>667</y><w>834</w><h>933</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;476;75;789;222;818;280;807;354;807;672;824;766;789;841;668;900;473;923</additional_attributes></element><element><id>Relation</id><coordinates><x>1210</x><y>1116</y><w>360</w><h>324</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;25;24;38;39;57;117;81;191;206;281;350;314</additional_attributes></element><element><id>Relation</id><coordinates><x>342</x><y>1062</y><w>470</w><h>150</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>460;10;305;47;144;93;75;116;10;140</additional_attributes></element><element><id>Relation</id><coordinates><x>1017</x><y>1115</y><w>24</w><h>86</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;12;45;14;76</additional_attributes></element><element><id>Relation</id><coordinates><x>1229</x><y>1024</y><w>1160</w><h>171</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;609;47;1086;131;1119;144;1150;161</additional_attributes></element><element><id>Relation</id><coordinates><x>755</x><y>1115</y><w>105</w><h>71</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>95;10;51;37;10;61</additional_attributes></element><element><id>Relation</id><coordinates><x>1229</x><y>1108</y><w>142</w><h>105</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;34;23;57;37;98;65;132;95</additional_attributes></element><element><id>Relation</id><coordinates><x>1229</x><y>1036</y><w>2602</w><h>360</h></coordinates><panel_attributes>lt=.&gt;
+creates</panel_attributes><additional_attributes>10;10;432;52;948;89;1509;88;2066;119;2309;168;2522;291;2560;318;2592;350</additional_attributes></element><element><id>Relation</id><coordinates><x>1047</x><y>1279</y><w>71</w><h>124</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;36;62;61;114</additional_attributes></element><element><id>Relation</id><coordinates><x>987</x><y>1279</y><w>1665</w><h>596</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>34;10;17;80;10;165;10;472;80;551;265;528;909;532;1551;550;1605;564;1655;586</additional_attributes></element><element><id>Relation</id><coordinates><x>1453</x><y>1492</y><w>149</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>139;10;73;41;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1641</x><y>1501</y><w>47</w><h>71</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>37;10;23;36;10;61</additional_attributes></element><element><id>Relation</id><coordinates><x>1769</x><y>1497</y><w>80</w><h>75</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;41;38;70;65</additional_attributes></element><element><id>Relation</id><coordinates><x>1866</x><y>1490</y><w>183</w><h>76</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;74;31;139;54;156;60;173;66</additional_attributes></element><element><id>Relation</id><coordinates><x>1394</x><y>1631</y><w>58</w><h>83</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;29;42;48;73</additional_attributes></element><element><id>Relation</id><coordinates><x>1804</x><y>1291</y><w>205</w><h>112</h></coordinates><panel_attributes>lt=.&gt;
+creates</panel_attributes><additional_attributes>195;10;101;57;10;102</additional_attributes></element><element><id>Relation</id><coordinates><x>2102</x><y>1291</y><w>20</w><h>121</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;10;63;10;111</additional_attributes></element><element><id>Relation</id><coordinates><x>128</x><y>1290</y><w>95</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>85;10;46;72;10;128</additional_attributes></element><element><id>Relation</id><coordinates><x>257</x><y>1292</y><w>65</w><h>136</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;29;71;55;126</additional_attributes></element><element><id>Relation</id><coordinates><x>313</x><y>1273</y><w>2339</w><h>602</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;98;71;131;171;131;478;339;562;668;534;1447;538;2225;556;2279;570;2329;592</additional_attributes></element><element><id>Relation</id><coordinates><x>3870</x><y>1302</y><w>33</w><h>98</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>23;10;16;49;10;88</additional_attributes></element><element><id>Relation</id><coordinates><x>3872</x><y>1083</y><w>34</w><h>121</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..*</panel_attributes><additional_attributes>10;10;17;62;24;111</additional_attributes></element><element><id>Relation</id><coordinates><x>3658</x><y>1484</y><w>122</w><h>67</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>112;10;62;33;10;57</additional_attributes></element><element><id>Relation</id><coordinates><x>3503</x><y>1512</y><w>28</w><h>42</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;14;21;18;32</additional_attributes></element><element><id>Relation</id><coordinates><x>3364</x><y>1509</y><w>67</w><h>202</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>57;10;49;22;44;35;17;117;10;192</additional_attributes></element><element><id>Relation</id><coordinates><x>3418</x><y>1658</y><w>57</w><h>53</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=5..7</panel_attributes><additional_attributes>47;10;28;27;10;43</additional_attributes></element><element><id>Relation</id><coordinates><x>2976</x><y>1740</y><w>345</w><h>150</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>335;10;198;20;49;89;24;112;10;140</additional_attributes></element><element><id>Relation</id><coordinates><x>3538</x><y>1650</y><w>24</w><h>57</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;12;29;14;47</additional_attributes></element><element><id>Relation</id><coordinates><x>2582</x><y>1295</y><w>390</w><h>601</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..*</panel_attributes><additional_attributes>10;10;85;63;106;149;106;386;180;477;340;534;364;562;380;591</additional_attributes></element><element><id>Relation</id><coordinates><x>2696</x><y>1260</y><w>686</w><h>134</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;35;31;66;47;328;84;599;97;638;108;676;124</additional_attributes></element><element><id>Relation</id><coordinates><x>3223</x><y>1260</y><w>185</w><h>133</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;86;62;175;123</additional_attributes></element><element><id>Relation</id><coordinates><x>3216</x><y>1260</y><w>539</w><h>614</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;39;31;75;47;291;47;496;67;529;223;501;399;504;486;462;547;282;565;94;569;54;583;18;604</additional_attributes></element><element><id>Relation</id><coordinates><x>3036</x><y>1268</y><w>1096</w><h>773</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..*</panel_attributes><additional_attributes>10;10;34;27;63;39;367;40;642;89;670;233;681;391;871;473;1052;561;1086;631;1052;699;995;748;923;763</additional_attributes></element><element><id>Relation</id><coordinates><x>2718</x><y>1260</y><w>263</w><h>611</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>253;10;225;30;193;47;105;61;34;97;10;135;13;184;13;491;13;549;13;601</additional_attributes></element><element><id>Relation</id><coordinates><x>2562</x><y>1288</y><w>247</w><h>135</h></coordinates><panel_attributes>lt=.&gt;</panel_attributes><additional_attributes>10;10;23;14;35;19;90;25;142;39;200;79;237;125</additional_attributes></element><element><id>Relation</id><coordinates><x>2964</x><y>1943</y><w>20</w><h>76</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=1..*</panel_attributes><additional_attributes>10;10;10;38;10;66</additional_attributes></element><element><id>Relation</id><coordinates><x>2987</x><y>1930</y><w>110</w><h>85</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;23;24;38;37;64;58;100;75</additional_attributes></element><element><id>Relation</id><coordinates><x>3039</x><y>2050</y><w>451</w><h>84</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;15;12;20;13;263;56;441;74</additional_attributes></element><element><id>Relation</id><coordinates><x>3694</x><y>1941</y><w>383</w><h>97</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..*</panel_attributes><additional_attributes>373;10;307;20;294;26;170;64;10;87</additional_attributes></element><element><id>Relation</id><coordinates><x>3565</x><y>2053</y><w>63</w><h>56</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>53;10;32;28;10;46</additional_attributes></element><element><id>Relation</id><coordinates><x>3266</x><y>1954</y><w>118</w><h>65</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..*</panel_attributes><additional_attributes>10;10;62;34;108;55</additional_attributes></element><element><id>Relation</id><coordinates><x>3451</x><y>2053</y><w>63</w><h>56</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>10;10;31;28;53;46</additional_attributes></element><element><id>Relation</id><coordinates><x>3589</x><y>2042</y><w>263</w><h>83</h></coordinates><panel_attributes>lt=-&gt;</panel_attributes><additional_attributes>253;10;130;42;10;73</additional_attributes></element></diagram>

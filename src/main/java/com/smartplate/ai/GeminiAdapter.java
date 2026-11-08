@@ -17,18 +17,25 @@ import java.time.Duration;
 /**
  * Adapter pattern - a third Adapter, for Google's Gemini API.
  *
- * <p>Works like AIAdapter and OllamaAdapter: it implements the AIModel interface the agent
- * expects, translates {@code generate(prompt)} into a Gemini {@code generateContent} REST
+ * <p>
+ * Works like AIAdapter and OllamaAdapter: it implements the AIModel interface
+ * the agent
+ * expects, translates {@code generate(prompt)} into a Gemini
+ * {@code generateContent} REST
  * request, and translates the JSON reply back into plain text. Errors become
- * AIServiceException, so the agent needs no changes. It uses only the JDK's HttpClient and
+ * AIServiceException, so the agent needs no changes. It uses only the JDK's
+ * HttpClient and
  * Jackson (already on the classpath through the Anthropic SDK).
  */
 public class GeminiAdapter implements AIModel {
 
     public static final String API_KEY_VARIABLE = "GEMINI_API_KEY";
     public static final String MODEL_VARIABLE = "GEMINI_MODEL";
-    /** Google's alias for its newest Flash model, so the default keeps working as models are retired. */
-    public static final String DEFAULT_MODEL = "gemini-flash-latest";
+    /**
+     * Google's alias for its newest Flash model, so the default keeps working as
+     * models are retired.
+     */
+    public static final String DEFAULT_MODEL = "GEMINI_MODEL";
     public static final String DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com";
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
@@ -65,7 +72,7 @@ public class GeminiAdapter implements AIModel {
             throw new AIServiceException("No API key: set " + API_KEY_VARIABLE + " to use Gemini.");
         }
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1beta/models/"
-                        + URLEncoder.encode(model, StandardCharsets.UTF_8) + ":generateContent"))
+                + URLEncoder.encode(model, StandardCharsets.UTF_8) + ":generateContent"))
                 .timeout(requestTimeout)
                 .header("Content-Type", "application/json")
                 // the key goes in a header, never in the URL, so it cannot end up in logs

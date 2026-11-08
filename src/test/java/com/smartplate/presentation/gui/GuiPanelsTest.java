@@ -17,8 +17,11 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import java.awt.Component;
 import java.awt.Container;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Headless tests of the redesigned Swing panels. AI requests run in place (TaskRunner.direct())
+ * Headless tests of the redesigned Swing panels. AI requests run in place
+ * (TaskRunner.direct())
  * with the offline Mock AI, so every check is deterministic.
  */
 class GuiPanelsTest {
@@ -47,7 +51,8 @@ class GuiPanelsTest {
         }
     }
 
-    // ------------------------------------------------------------------ AI Assistant (F04–F06, F09, F10)
+    // ------------------------------------------------------------------ AI
+    // Assistant (F04–F06, F09, F10)
 
     @Test
     void assistantStartsWithTheEmptyStateAndDisabledPlanActions() {
@@ -127,7 +132,29 @@ class GuiPanelsTest {
         assertEquals(AssistantPanel.SIDE_NUTRITION, panel.sideView());
     }
 
-    // ------------------------------------------------------------------ Recipes (F03, F07–F09)
+    // ------------------------------------------------------------------ Recipes
+    // (F03, F07–F09)
+
+    @Test
+    void theWindowIsToldWhenAnAIRequestStartsAndEnds() {
+        List<Runnable> pending = new ArrayList<>();
+        TaskRunner later = new TaskRunner() {
+            @Override
+            public <T> void run(Callable<T> task, Consumer<T> onSuccess, Consumer<RuntimeException> onFailure) {
+                pending.add(() -> TaskRunner.direct().run(task, onSuccess, onFailure));
+            }
+        };
+
+        AssistantPanel panel = new AssistantPanel(facade, later);
+        List<Boolean> busyStates = new ArrayList<>();
+        panel.onBusyChange(busyStates::add);
+
+        panel.requestField().setText("Weekly dinners");
+        panel.createPlan();
+        assertEquals(List.of(true), busyStates); // request running but windows locks the two combo boxes
+        pending.get(0).run(); // run the AI answers
+        assertEquals(List.of(true, false), busyStates); // request done, window unlocks the combo boxes
+    }
 
     @Test
     void recipesSearchScaleSubstituteAndReset() {
@@ -175,7 +202,8 @@ class GuiPanelsTest {
         assertTrue(panel.status().getMessage().contains("No substitute"));
     }
 
-    // ------------------------------------------------------------------ Pantry (F02)
+    // ------------------------------------------------------------------ Pantry
+    // (F02)
 
     @Test
     void pantryErrorsGoNextToTheRightField() {
@@ -208,7 +236,8 @@ class GuiPanelsTest {
         assertNotNull(facade.getPantry().findItem("chickpeas"));
     }
 
-    // ------------------------------------------------------------------ Preferences (F01)
+    // ------------------------------------------------------------------
+    // Preferences (F01)
 
     @Test
     void invalidProfileIsReportedAndThePreviousProfileStays() {
@@ -254,7 +283,8 @@ class GuiPanelsTest {
 
     @Test
     void theAiModelSwitcherChangesModelOrExplainsWhyNot() {
-        SmartRecipeFacade switchable = SmartRecipeFacade.create(new MockAIModel(), () -> Map.of("OLLAMA_MODEL", "gemma4:e4b"));
+        SmartRecipeFacade switchable = SmartRecipeFacade.create(new MockAIModel(),
+                () -> Map.of("OLLAMA_MODEL", "gemma4:e4b"));
         JComponent content = new MealPlannerGUI(switchable).buildContent();
         JTabbedPane tabs = find(content, JTabbedPane.class);
         JComboBox<?> model = findNamed((Component) tabs.getClientProperty(

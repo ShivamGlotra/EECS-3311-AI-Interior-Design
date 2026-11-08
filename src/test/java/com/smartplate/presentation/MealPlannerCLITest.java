@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MealPlannerCLITest {
@@ -60,5 +61,12 @@ class MealPlannerCLITest {
         assertTrue(out.contains("Nothing to undo"));
         assertTrue(out.contains("Unknown command"));
         assertTrue(out.contains("expected a number"));
+    }
+
+    @Test
+    void undoWithNothingToUndoDoesNotClaimSuccess() {
+        String out = run("undo");
+        assertTrue(out.contains("Nothing to undo"));
+        assertFalse(out.contains("Undone."));
     }
 }

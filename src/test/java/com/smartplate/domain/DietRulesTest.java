@@ -2,11 +2,14 @@ package com.smartplate.domain;
 
 import org.junit.jupiter.api.Test;
 
+import com.smartplate.TestData;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 class DietRulesTest {
 
@@ -47,5 +50,27 @@ class DietRulesTest {
     void conflictsListEveryReason() {
         UserProfile p = new UserProfile(List.of("vegan"), List.of("dairy"), List.of("butter"), 30, 2);
         assertEquals(3, DietRules.conflicts(new Ingredient("butter", "dairy"), p).size());
+    }
+
+    @Test
+    void dislikingADairyFoodDoesNotBlockPlantBasedFoodsNamedAfterIt() {
+        UserProfile noMilkOrButter = TestData.profile(List.of(), List.of(), List.of("milk", "butter"), 60);
+        assertTrue(DietRules.conflicts(new Ingredient("coconut milk", "other"), noMilkOrButter).isEmpty());
+        assertTrue(DietRules.conflicts(new Ingredient("oat milk", "other"), noMilkOrButter).isEmpty());
+        assertTrue(DietRules.conflicts(new Ingredient("peanut butter", "nut"), noMilkOrButter).isEmpty());
+        assertFalse(DietRules.conflicts(new Ingredient("milk", "dairy"), noMilkOrButter).isEmpty());
+        assertFalse(DietRules.conflicts(new Ingredient("butter", "dairy"), noMilkOrButter).isEmpty());
+    }
+
+    @Test
+    void allergiesStayStrictForFoodsNamedAfterTheAllergen() {
+        UserProfile milkAllergy = TestData.profile(List.of(), List.of("milk"), List.of(), 60);
+        assertFalse(DietRules.conflicts(new Ingredient("coconut milk", "other"), milkAllergy).isEmpty());
+    }
+
+    @Test
+    void accentedAndPlainSpellingsMatchEachOther() {
+        assertTrue(DietRules.matches(new Ingredient("jalapeno", "vegetable"), "jalapeños"));
+        assertTrue(DietRules.matches(new Ingredient("jalapeño", "vegetable"), "jalapeno"));
     }
 }

@@ -7,7 +7,8 @@ import java.util.Objects;
  * Identity of an ingredient (name and category). Two ingredients are equal when
  * their names are equal, ignoring case.
  *
- * <p>Categories used by the sample data: vegetable, fruit, grain, legume, meat,
+ * <p>
+ * Categories used by the sample data: vegetable, fruit, grain, legume, meat,
  * seafood, dairy, egg, nut, oil, spice, condiment, herb, sweetener, other.
  */
 public final class Ingredient {
@@ -19,9 +20,10 @@ public final class Ingredient {
         if (name == null || name.isBlank()) {
             throw new SmartPlateException("Ingredient name must not be empty.");
         }
-        this.name = name.trim().toLowerCase(Locale.ROOT);
+        this.name = DietRules.withoutAccents(name.trim().toLowerCase(Locale.ROOT));
         this.category = category == null || category.isBlank()
-                ? "other" : category.trim().toLowerCase(Locale.ROOT);
+                ? "other"
+                : category.trim().toLowerCase(Locale.ROOT);
     }
 
     public Ingredient(String name) {

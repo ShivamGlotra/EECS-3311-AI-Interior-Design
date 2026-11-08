@@ -1,0 +1,7 @@
+{
+    // VS Code suggests these when someone opens the project.
+    "recommendations": [
+        "vscjava.vscode-java-pack",
+        "sanaajani.taskrunnercode"
+    ]
+}

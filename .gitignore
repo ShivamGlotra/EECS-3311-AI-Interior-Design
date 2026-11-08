@@ -1,4 +1,8 @@
-.vscode
+# VS Code: share the project's tasks, launch configs and recommended extensions; keep personal settings private
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 out/
 target/
 .DS_Store

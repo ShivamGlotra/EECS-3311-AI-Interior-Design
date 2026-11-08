@@ -5,18 +5,26 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Chooses which AIModel implementation SmartPlate uses (Adapter pattern - client side).
+ * Chooses which AIModel implementation SmartPlate uses (Adapter pattern -
+ * client side).
  *
- * <p>Selected by the environment variable {@code SMARTPLATE_AI_PROVIDER}:
+ * <p>
+ * Selected by the environment variable {@code SMARTPLATE_AI_PROVIDER}:
  * <ul>
- *   <li>{@code mock}      - offline MockAIModel</li>
- *   <li>{@code anthropic} - AIAdapter over AIClient (needs ANTHROPIC_API_KEY)</li>
- *   <li>{@code gemini}    - GeminiAdapter (needs GEMINI_API_KEY; GEMINI_MODEL is optional)</li>
- *   <li>{@code ollama}    - OllamaAdapter, a local model (OLLAMA_MODEL and OLLAMA_URL are optional)</li>
- *   <li>{@code auto} (default) - anthropic if its key is set, else gemini if its key is set, otherwise mock</li>
+ * <li>{@code mock} - offline MockAIModel</li>
+ * <li>{@code anthropic} - AIAdapter over AIClient (needs
+ * ANTHROPIC_API_KEY)</li>
+ * <li>{@code gemini} - GeminiAdapter (needs GEMINI_API_KEY; GEMINI_MODEL is
+ * optional)</li>
+ * <li>{@code ollama} - OllamaAdapter, a local model (OLLAMA_MODEL and
+ * OLLAMA_URL are optional)</li>
+ * <li>{@code auto} (default) - anthropic if its key is set, else gemini if its
+ * key is set, otherwise mock</li>
  * </ul>
- * Ollama is never picked automatically, so a stray local server cannot change behaviour silently.
- * The GUI's model switcher uses {@link #PROVIDERS}, {@link #missingSetting} and {@link #forProvider}.
+ * Ollama is never picked automatically, so a stray local server cannot change
+ * behaviour silently.
+ * The GUI's model switcher uses {@link #PROVIDERS}, {@link #missingSetting} and
+ * {@link #forProvider}.
  */
 public final class AIModelFactory {
 
@@ -32,12 +40,18 @@ public final class AIModelFactory {
     private AIModelFactory() {
     }
 
-    /** The real environment, plus a local git-ignored .env file for secrets (see EnvFile). */
+    /**
+     * The real environment, plus a local git-ignored .env file for secrets (see
+     * EnvFile).
+     */
     public static AIModel fromEnvironment() {
         return create(EnvFile.load());
     }
 
-    /** Takes the environment as a map so tests do not depend on the real environment. */
+    /**
+     * Takes the environment as a map so tests do not depend on the real
+     * environment.
+     */
     public static AIModel create(Map<String, String> env) {
         String provider = value(env, PROVIDER_VARIABLE, "auto").toLowerCase(Locale.ROOT);
         if (provider.equals("auto")) {
@@ -49,7 +63,9 @@ public final class AIModelFactory {
         return forProvider(provider, env);
     }
 
-    /** Builds the model for one provider name (mock, anthropic, gemini or ollama). */
+    /**
+     * Builds the model for one provider name (mock, anthropic, gemini or ollama).
+     */
     public static AIModel forProvider(String provider, Map<String, String> env) {
         String name = provider == null ? "" : provider.trim().toLowerCase(Locale.ROOT);
         switch (name) {
@@ -71,7 +87,10 @@ public final class AIModelFactory {
         }
     }
 
-    /** Why a provider cannot be used yet (e.g. its API key is missing), or null if it can. */
+    /**
+     * Why a provider cannot be used yet (e.g. its API key is missing), or null if
+     * it can.
+     */
     public static String missingSetting(String provider, Map<String, String> env) {
         String name = provider == null ? "" : provider.trim().toLowerCase(Locale.ROOT);
         if (name.equals(ANTHROPIC) && value(env, AIClient.API_KEY_VARIABLE, "").isEmpty()) {

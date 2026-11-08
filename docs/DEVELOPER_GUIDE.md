@@ -9,7 +9,7 @@ design patterns, how to change things, and how to find and fix bugs.
 > little; search for the function name instead (in IntelliJ: `Ctrl+F12` / `Cmd+F12` lists every
 > method in a file).
 >
-> **Short paths.** `agent/MealPlanningAgent.java:95` means
+> **Short paths.** `agent/MealPlanningAgent.java:102` means
 > `src/main/java/com/smartplate/agent/MealPlanningAgent.java`, line 95. Test files are under
 > `src/test/java/com/smartplate/`.
 
@@ -144,20 +144,20 @@ CSS framework).
 | React | Swing | Where to see it |
 |---|---|---|
 | `<div>` | `JPanel` | everywhere |
-| `<button onClick={f}>` | `JButton b; b.addActionListener(e -> f());` | `AssistantPanel.buildRequestBar` (:135) |
+| `<button onClick={f}>` | `JButton b; b.addActionListener(e -> f());` | `AssistantPanel.buildRequestBar` (:137) |
 | `<input>` | `JTextField` | request field |
 | `<textarea>` | `JTextArea` | agent trace |
 | `<select>` | `JComboBox<String>` | unit, category, strategy |
 | `<input type="checkbox">` | `JCheckBox` | diets, shopping list |
 | `<input type="number">` | `JSpinner` | servings, cooking time |
 | `<table>` + data array | `JTable` + `DefaultTableModel` | plan, results, pantry tables |
-| cell render function | `TableCellRenderer` | `AssistantPanel.PlanRenderer` (:731) |
+| cell render function | `TableCellRenderer` | `AssistantPanel.PlanRenderer` (:761) |
 | `display:flex; flex-direction:row` | `FlowLayout` (`Ui.row`) | button rows |
 | `display:flex; flex-direction:column` | `BoxLayout.Y_AXIS` (`Ui.stack`) | stacked labels |
 | CSS grid areas (header / main / sidebar) | `BorderLayout` (NORTH / CENTER / EAST / SOUTH / WEST) | every panel |
 | `grid-template-columns: repeat(2, 1fr)` | `GridLayout(rows, cols, gapX, gapY)` | stat boxes |
 | `{cond ? <A/> : <B/>}` | `CardLayout` (`cards.show(panel, "name")`) | empty state vs table |
-| Tabs component | `JTabbedPane` | `MealPlannerGUI.buildContent` (:54) |
+| Tabs component | `JTabbedPane` | `MealPlannerGUI.buildContent` (:72) |
 | Theme provider / global CSS | `Theme.install()` → `UIManager.put(...)` | `gui/Theme.java:54` |
 | inline style | `putClientProperty(FlatClientProperties.STYLE, "...")` | `Ui.primary` (:129) |
 | `useState` + automatic re-render | **fields + you call a refresh method yourself** | `refreshPlan()`, `render()` |
@@ -169,7 +169,7 @@ CSS framework).
 In React, changing state re-renders the UI. **In Swing nothing updates by itself.** After you change
 data, you must update the widgets yourself, for example `planModel.addRow(...)`,
 `label.setText(...)` or `button.setEnabled(...)`. That's why each panel has a method like
-`refreshPlan()` (`AssistantPanel.java:445`), `render()` (`RecipesPanel.java:341`), `refresh()`
+`refreshPlan()` (`AssistantPanel.java:467`), `render()` (`RecipesPanel.java:341`), `refresh()`
 (`PantryPanel.java:187`) or `load()` (`PreferencesPanel.java:178`) that rebuilds what is shown from
 the facade.
 
@@ -181,7 +181,7 @@ the facade.
 
 ```bash
 mvn compile                          # compile only (like tsc)
-mvn test                             # run all 112 tests
+mvn test                             # run all 134 tests
 mvn package                          # build target/smartplate-1.0.0.jar (includes all libraries)
 java -jar target/smartplate-1.0.0.jar            # open the desktop app
 java -jar target/smartplate-1.0.0.jar --cli      # command-line version
@@ -214,8 +214,15 @@ IntelliJ runs the app from the project folder, so it finds `.env` too.
 - **Debug:** click in the gutter next to a line number to add a red breakpoint, then use the 🐞
   button instead of ▶. The program pauses there and you can inspect every variable (like Chrome
   DevTools breakpoints). Good breakpoints: `SmartRecipeFacade.createMealPlan` (:143),
-  `MealPlanningAgent.createPlan` (:154), `ConstraintValidator.validateRecipe` (:23).
+  `MealPlanningAgent.createPlan` (:164), `ConstraintValidator.validateRecipe` (:23).
 - Run a test: open the test file and click ▶ next to the class or method.
+
+**VS Code** (the closest thing to `package.json` scripts): `.vscode/tasks.json` defines
+*SmartPlate: run app*, *run CLI*, *run with mock AI*, *test*, *build jar* and *clean*. Run them from
+*Terminal → Run Task…*, with Ctrl/Cmd+Shift+B (build jar), or as buttons in the **Task Runner** view
+at the bottom of the Explorer (install the recommended extensions VS Code suggests when you open the
+folder). For breakpoints use the **Run and Debug** panel: `.vscode/launch.json` has *SmartPlate: app*,
+*CLI* and *app with mock AI* (F5).
 
 ---
 
@@ -223,8 +230,11 @@ IntelliJ runs the app from the project folder, so it finds `.env` too.
 
 ```
 pom.xml                         build file: Java 17, JUnit 5, Anthropic SDK, FlatLaf, fat-jar packaging
-README.md                       the Stage 1 design report (+ a short pointer to the docs)
+README.md                       project title, setup steps and links to the documents
+.vscode/                        shared VS Code tasks (run, test, build), debug configs, recommended extensions
+SmartPlate_Stage1_Report_FINAL.md  the Stage 1 design report
 docs/
+  STAGE2_REPORT.md              Stage 2 report: AI tools, collaboration log, traceability, design changes
   IMPLEMENTATION.md             shorter code explanation for the instructor
   AI_USAGE.md                   where AI helped (disclosure for the professor)
   DEVELOPER_GUIDE.md            this file
@@ -290,7 +300,7 @@ src/main/java/com/smartplate/
       Icons.java                      small icons drawn in code
       TaskRunner.java                 runs AI calls in the background (or directly in tests)
 
-src/test/java/com/smartplate/         20 test classes, 112 tests (see section 12)
+src/test/java/com/smartplate/         21 test classes, 134 tests (see section 12)
 ```
 
 ---
@@ -347,7 +357,7 @@ all receive **the same facade object**, so they share one profile, one pantry an
 | Pattern | Problem it solves | Classes | React analogy |
 |---|---|---|---|
 | **Facade** | UI shouldn't know 10 internal classes | `SmartRecipeFacade` | an `api.js` module the components call |
-| **Adapter** | swap AI providers / run offline | `AIModel` ← `AIAdapter` → `AIClient`; `MockAIModel` | a wrapper around `fetch` / an SDK; a mock for tests |
+| **Adapter** | swap AI providers / run offline | `AIModel` ← `AIAdapter` → `AIClient`; `GeminiAdapter`; `OllamaAdapter`; `MockAIModel` | a wrapper around `fetch` / an SDK; a mock for tests |
 | **Strategy** | several ways to pick candidate recipes | `RecipeSelectionStrategy`, `PantryFirstStrategy`, `FastestMealStrategy` | passing a `sortFn` prop |
 | **Command** | undo plan edits | `Command`, `ReplaceMealCommand`, `CommandHistory` | Redux actions + an undo stack |
 | **Composite** | one meal and a whole plan treated the same | `PlanComponent`, `MealPlan`, `PlannedMeal` | a component tree where parent = sum of children |
@@ -367,27 +377,27 @@ State it owns: `profile`, `pantry`, `currentPlan`, `lastSubstitution`.
   (model, `SYSTEM_PROMPT` at :26, low effort, refusal fallback), `client.sendRequest`,
   then `extractText` (:78) gets the text back, or throws `AIServiceException`.
 - `AIClient` (`ai/AIClient.java:22`): reads `ANTHROPIC_API_KEY` / `SMARTPLATE_AI_MODEL`
-  (`fromEnvironment` :38) and calls the Anthropic SDK (`sendRequest` :52).
-- `OllamaAdapter` (`ai/OllamaAdapter.java:25`): the same job for a local model. `generate` (:60) POSTs
-  `buildRequestBody` (:85: model, `stream: false`, the same `SYSTEM_PROMPT`, the prompt, temperature 0.2)
-  to `<OLLAMA_URL>/api/chat`; `extractText` (:97) reads `message.content`, drops `<think>…</think>`
-  (`stripThinking` :119) and maps 404 → "ollama pull <model>", other HTTP errors, connection refused
+  (`fromEnvironment` :38) and calls the Anthropic SDK (`sendRequest` :53).
+- `OllamaAdapter` (`ai/OllamaAdapter.java:31`): the same job for a local model. `generate` (:73) POSTs
+  `buildRequestBody` (:98: model, `stream: false`, the same `SYSTEM_PROMPT`, the prompt, temperature 0.2)
+  to `<OLLAMA_URL>/api/chat`; `extractText` (:110) reads `message.content`, drops `<think>…</think>`
+  (`stripThinking` :135) and maps 404 → "ollama pull <model>", other HTTP errors, connection refused
   and timeouts (180 s) to `AIServiceException`.
-- `GeminiAdapter` (`ai/GeminiAdapter.java:26`): the same job for Google Gemini. `generate` (:63) POSTs
-  `buildRequestBody` (:90: `systemInstruction` = `SYSTEM_PROMPT`, `contents` = the prompt) to
+- `GeminiAdapter` (`ai/GeminiAdapter.java:30`): the same job for Google Gemini. `generate` (:70) POSTs
+  `buildRequestBody` (:97: `systemInstruction` = `SYSTEM_PROMPT`, `contents` = the prompt) to
   `/v1beta/models/<model>:generateContent`, with the key in the `x-goog-api-key` header (never in the URL).
-  `extractText` (:100) joins the answer parts (skipping "thought" parts) and maps a bad key, unknown
+  `extractText` (:107) joins the answer parts (skipping "thought" parts) and maps a bad key, unknown
   model (404), rate limit (429), blocked prompt and empty answer to `AIServiceException`.
-- `AIModelFactory` (`ai/AIModelFactory.java`): `create(env)` (:41) handles `auto` (Claude key → Claude,
-  else Gemini key → Gemini, else Mock; never Ollama) and otherwise calls `forProvider(name, env)` (:53),
-  a `switch` over mock / anthropic / gemini / ollama. `missingSetting` (:75) says which key is missing;
-  `providerOf` (:87) maps a model back to its name. It takes the environment as a `Map`, so tests pass a fake one.
+- `AIModelFactory` (`ai/AIModelFactory.java`): `create(env)` (:55) handles `auto` (Claude key → Claude,
+  else Gemini key → Gemini, else Mock; never Ollama) and otherwise calls `forProvider(name, env)` (:69),
+  a `switch` over mock / anthropic / gemini / ollama. `missingSetting` (:94) says which key is missing;
+  `providerOf` (:106) maps a model back to its name. It takes the environment as a `Map`, so tests pass a fake one.
 - `EnvFile` (`ai/EnvFile.java`): `load()` = the real environment + the `KEY=value` lines of `./.env`
   (environment wins). Like `dotenv` in Node.
 - **Switching at run time:** the GUI's AI model box calls `facade.setAIProvider(name)` (`SmartRecipeFacade.java:279`),
   which re-reads the settings (so a key added to `.env` works without a restart), refuses with a
-  clear message if the key is missing, and otherwise calls `MealPlanningAgent.setAIModel` (:81).
-- `MockAIModel` (`ai/MockAIModel.java:32`): same interface, no network.
+  clear message if the key is missing, and otherwise calls `MealPlanningAgent.setAIModel` (:87).
+- `MockAIModel` (`ai/MockAIModel.java:40`): same interface, no network.
 
 ### 7.3 Strategy — `strategy/`
 - Interface `selectRecipes(recipes, profile, pantry)` (`RecipeSelectionStrategy.java:18`) plus the
@@ -395,8 +405,8 @@ State it owns: `profile`, `pantry`, `currentPlan`, `lastSubstitution`.
 - `PantryFirstStrategy.selectRecipes` (:19): filter, then sort by "number of pantry ingredients"
   (descending), then cooking time, then id.
 - `FastestMealStrategy.selectRecipes` (:15): filter, then sort by cooking time, then id.
-- The agent is the "context": `MealPlanningAgent.setStrategy` (:68). The GUI combo box calls
-  `facade.setStrategy("fastest")` (`MealPlannerGUI.statusArea`, :112).
+- The agent is the "context": `MealPlanningAgent.setStrategy` (:74). The GUI combo box calls
+  `facade.setStrategy("fastest")` (`MealPlannerGUI.statusArea`, :122).
 
 ### 7.4 Command — `command/`
 - `ReplaceMealCommand` (:10) stores `plan`, `day`, `oldMeal`, `newMeal`; `execute()` (:25) puts the
@@ -421,43 +431,43 @@ State it owns: `profile`, `pantry`, `currentPlan`, `lastSubstitution`.
 
 | # | What happens | Where |
 |---|---|---|
-| 1 | Button was wired to `createPlan()` | `gui/AssistantPanel.java:135` `buildRequestBar` |
-| 2 | Read the text; blank → red error, stop | `AssistantPanel.java:315` `createPlan` → `:391` `requestText` |
+| 1 | Button was wired to `createPlan()` | `gui/AssistantPanel.java:137` `buildRequestBar` |
+| 2 | Read the text; blank → red error, stop | `AssistantPanel.java:318` `createPlan` → `:391` `requestText` |
 | 3 | Disable buttons, show "Working…", run in background | `:370` `runAI` → `gui/TaskRunner.java:17` |
 | 4 | **Facade** forwards to the agent | `facade/SmartRecipeFacade.java:143` `createMealPlan` |
-| 5 | Read constraints from the text ("5 dinners", "avoid mushrooms"…) | `agent/RequestConstraints.java:53` `parse` |
-| 6 | Number of days must be 5–7 or error | `RequestConstraints.java:96` `planDays` |
-| 7 | Get all 30 recipes, strategy filters + sorts, keep 15 | `agent/MealPlanningAgent.java:282` `shortlist` |
-| 8 | Build the prompt (profile, candidates, response format) | `MealPlanningAgent.java:318` `newPrompt` |
-| 9 | Ask the AI | `MealPlanningAgent.java:296` `callAI` → `MockAIModel.generate` (:65) or `AIAdapter.generate` (:42) |
-| 10 | Parse "Monday: r03" lines | `MealPlanningAgent.java:351` `parsePlan` |
+| 5 | Read constraints from the text ("5 dinners", "avoid mushrooms"…) | `agent/RequestConstraints.java:64` `parse` |
+| 6 | Number of days must be 5–7 or error | `RequestConstraints.java:173` `planDays` |
+| 7 | Get all 30 recipes, strategy filters + sorts, keep 15 | `agent/MealPlanningAgent.java:298` `shortlist` |
+| 8 | Build the prompt (profile, candidates, response format) | `MealPlanningAgent.java:337` `newPrompt` |
+| 9 | Ask the AI | `MealPlanningAgent.java:312` `callAI` → `MockAIModel.generate` (:76) or `AIAdapter.generate` (:42) |
+| 10 | Parse "Monday: r03" lines | `MealPlanningAgent.java:370` `parsePlan` |
 | 11 | Unknown id → violation; known → `PlannedMeal` added | `:309` `lookup`, `plan/MealPlan.java:26` `addMeal` |
 | 12 | **Validate** the plan | `agent/ConstraintValidator.java:48` `validatePlan` → `:23` `validateRecipe` |
-| 13 | Problems? Ask once more with `PREVIOUS_VIOLATIONS` + `EXCLUDE`. Still bad → exception | loop in `MealPlanningAgent.createPlan` (:154) |
+| 13 | Problems? Ask once more with `PREVIOUS_VIOLATIONS` + `EXCLUDE`. Still bad → exception | loop in `MealPlanningAgent.createPlan` (:164) |
 | 14 | Facade stores the plan, clears undo history | `SmartRecipeFacade.java:143` |
-| 15 | Back on the UI thread: fill the table, show success + trace | `AssistantPanel.java:445` `refreshPlan`, `:404` `showTrace` |
+| 15 | Back on the UI thread: fill the table, show success + trace | `AssistantPanel.java:467` `refreshPlan`, `:404` `showTrace` |
 
 ### 8.2 GUI: **Edit plan** and **Undo**
 
-1. `AssistantPanel.editPlan` (:328) takes a `snapshot()` (:484) of day → recipe first.
-2. `facade.editMealPlan` (:152) → `agent.editPlan` (`MealPlanningAgent.java:214`):
-   finds the day in the text (`findDay` :375), asks the AI for `DAY:` + `RECIPE:`, checks the recipe
+1. `AssistantPanel.editPlan` (:331) takes a `snapshot()` (:506) of day → recipe first.
+2. `facade.editMealPlan` (:152) → `agent.editPlan` (`MealPlanningAgent.java:229`):
+   finds the day in the text (`findDay` :394), asks the AI for `DAY:` + `RECIPE:`, checks the recipe
    exists, is different, and passes `validateRecipe`. Then it returns a `ReplaceMealCommand`.
 3. The facade runs it: `CommandHistory.execute` (:16) → `ReplaceMealCommand.execute` (:25) →
    `MealPlan.replaceMeal` (:43).
-4. The panel compares snapshots (`firstDifference` :495) to know which day changed. It sets
-   `changedDay` (tinted row + "CHANGED" tag, `PlanRenderer` :731) and shows the before → now card
-   (`comparison` :688).
-5. **Undo:** `AssistantPanel.undo` (:347) → `facade.undoLastChange` (:160) →
+4. The panel compares snapshots (`firstDifference` :517) to know which day changed. It sets
+   `changedDay` (tinted row + "CHANGED" tag, `PlanRenderer` :761) and shows the before → now card
+   (`comparison` :715).
+5. **Undo:** `AssistantPanel.undo` (:350) → `facade.undoLastChange` (:160) →
    `CommandHistory.undo` (:22) → `ReplaceMealCommand.undo` (:30).
 
 ### 8.3 GUI: **Shopping list**
 
-`AssistantPanel.loadShoppingList` (:506) → `facade.generateShoppingList` (:202) →
-`ShoppingListService.generate` (`service/ShoppingListService.java:19`):
+`AssistantPanel.loadShoppingList` (:529) → `facade.generateShoppingList` (:202) →
+`ShoppingListService.generate` (`service/ShoppingListService.java:20`):
 1. `plan.getIngredients()`: every ingredient of every day, already scaled to that day's servings.
 2. Invalid quantities are skipped with a note; the rest go into a `ShoppingList`.
-3. `ShoppingList.consolidate()` (`domain/ShoppingList.java:28`) merges duplicates.
+3. `ShoppingList.consolidate()` (`domain/ShoppingList.java:30`) merges duplicates.
 4. For each item, subtract the pantry amount (same unit family only). Keep what's still missing.
 5. `consolidate()` again for nice units (≥1000 g → kg).
 
@@ -465,8 +475,8 @@ The panel also computes "Covered by your pantry" (plan ingredients you have that
 
 ### 8.4 CLI: typing `plan weekday dinners`
 
-`app/SmartPlateApp.java:35` `main` → `MealPlannerCLI.runLoop` (:72) reads a line →
-`handle` (:108) → `case "plan"` (:140) → `facade.createMealPlan(...)` → `printPlan` (:319).
+`app/SmartPlateApp.java:35` `main` → `MealPlannerCLI.runLoop` (:76) reads a line →
+`handle` (:112) → `case "plan"` (:144) → `facade.createMealPlan(...)` → `printPlan` (:324).
 The same facade method as the GUI, so the behaviour is identical.
 
 ---
@@ -490,10 +500,10 @@ Every method validates its input, calls one subsystem, and returns or throws. No
 - `setStrategy(name)` (:243): `"pantry..."` → `PantryFirstStrategy`, `"fast..."` → `FastestMealStrategy`.
 
 ### 9.3 `agent/MealPlanningAgent.java` (the heart of the app)
-Constants: `MAX_CANDIDATES = 15` (:46), `DEFAULT_RECOMMENDATIONS = 3` (:47),
-`MAX_ATTEMPTS = 2` (:48) means first try + one revision. `PLAN_LINE` regex (:50) matches "Monday: r03".
+Constants: `MAX_CANDIDATES = 15` (:52), `DEFAULT_RECOMMENDATIONS = 3` (:53),
+`MAX_ATTEMPTS = 2` (:54) means first try + one revision. `PLAN_LINE` regex (:56) matches "Monday: r03".
 
-**Algorithm used by `recommend` (:95) and `createPlan` (:154):**
+**Algorithm used by `recommend` (:102) and `createPlan` (:164):**
 ```
 constraints = RequestConstraints.parse(request)      // extra rules from the text
 effective   = constraints.applyTo(profile)           // profile + those rules (copy)
@@ -507,12 +517,12 @@ repeat up to 2 times:
     if no violations → return result
 return valid part (recommend) or throw SmartPlateException (plan)
 ```
-- `editPlan` (:214) does **not** revise. It follows sequence diagram SD05: one answer, then
+- `editPlan` (:229) does **not** revise. It follows sequence diagram SD05: one answer, then
   validate, then a command or an error.
-- `shortlist` (:282), `callAI` (:296, logs the answer), `lookup` (:309), `newPrompt` (:318),
-  `candidateLine` (:342, "id | name | min | tags | ingredients"), `parsePlan` (:351),
-  `parseIdList` (:360), `cleanId` (:371, removes `*`, backticks etc.), `findDay` (:375).
-- `log` (:393) appends to the **trace** the GUI shows (`getLastTrace` :89).
+- `shortlist` (:298), `callAI` (:312, logs the answer), `lookup` (:328), `newPrompt` (:337),
+  `candidateLine` (:361, "id | name | min | tags | ingredients"), `parsePlan` (:370),
+  `parseIdList` (:379), `cleanId` (:390, removes `*`, backticks etc.), `findDay` (:394).
+- `log` (:406) appends to the **trace** the GUI shows (`getLastTrace` :95).
 
 **A prompt looks like this** (keys from `ai/PromptFormat.java`):
 ```
@@ -536,7 +546,7 @@ On a revision it also contains `PREVIOUS_VIOLATIONS:` lines and a filled `EXCLUD
   `validateRecipe` for every meal, prefixed with the day ("Tuesday: Chicken Stir-Fry (r04) contains…").
 
 ### 9.5 `agent/RequestConstraints.java` — reading rules out of a sentence
-Regular expressions (:25–31), all applied to the lower-cased request:
+Regular expressions (:28–31), all applied to the lower-cased request:
 
 | Rule | Regex idea | Example → result |
 |---|---|---|
@@ -547,30 +557,30 @@ Regular expressions (:25–31), all applied to the lower-cased request:
 | `AVOID` | avoid/no/without/skip + **one word** | "avoid mushrooms" → mushrooms |
 | diets | any word from `UserProfile.SUPPORTED_DIETS` | "something vegan" → vegan |
 
-`NOT_INGREDIENTS` (:32) stops "no more than 20 min" from adding "more" as a dislike.
-`planDays` (:96) throws if not 5–7. `applyTo` (:128) returns a **copy** of the profile with the extra
+`NOT_INGREDIENTS` (:43) stops "no more than 20 min" from adding "more" as a dislike.
+`planDays` (:173) throws if not 5–7. `applyTo` (:206) returns a **copy** of the profile with the extra
 diets, dislikes and a stricter time limit, so the saved profile never changes.
 
 ### 9.6 `domain/DietRules.java` — matching ingredients to allergies and diets
-- `conflicts(ingredient, profile)` (:40) returns reasons, e.g. `contains peanut butter (allergy: peanuts)`.
-- `matches(ingredient, term)` (:61):
-  1. `singular(term)` (:106): "mushrooms" → "mushroom", "tomatoes" → "tomato", "berries" → "berry".
+- `conflicts(ingredient, profile)` (:58) returns reasons, e.g. `contains peanut butter (allergy: peanuts)`.
+- `matches(ingredient, term)` (:82):
+  1. `singular(term)` (:139): "mushrooms" → "mushroom", "tomatoes" → "tomato", "berries" → "berry".
   2. Special case: "gluten" never matches a name containing "gluten-free".
-  3. If the term is a **category group** (`GROUP_CATEGORY` :29: nut, dairy, egg, meat, seafood) and the
+  3. If the term is a **category group** (`GROUP_CATEGORY` :36: nut, dairy, egg, meat, seafood) and the
      ingredient's category matches → true.
-  4. If the term is a **name group** (`GROUP_NAMES` :18, e.g. gluten → pasta, flour, bread…, shellfish
+  4. If the term is a **name group** (`GROUP_NAMES` :25, e.g. gluten → pasta, flour, bread…, shellfish
      → shrimp, crab…), match any member as a whole word.
   5. Otherwise: category equals term, or the name contains the term **as a whole word**
-     (`containsWord` :121, so "nut" doesn't match "nutmeg" and "egg" doesn't match "eggplant";
+     (`containsWord` :154, so "nut" doesn't match "nutmeg" and "egg" doesn't match "eggplant";
      a plural "s"/"es" after the word is allowed).
-- `violatesDiet(ingredient, diet)` (:86): vegetarian = no meat/seafood category; pescatarian = no meat;
+- `violatesDiet(ingredient, diet)` (:116): vegetarian = no meat/seafood category; pescatarian = no meat;
   vegan = no meat/seafood/dairy/egg/honey; gluten-free = `matches(…, "gluten")`; dairy-free = no dairy.
 
 ### 9.7 `domain/UserProfile.java`
-- Constructor (:33) lower-cases and trims entries but **keeps duplicates**, so `validate` can report them.
-- `validate()` (:50): servings ≥ 1, time ≥ 1, each entry must match `[a-z][a-z \-']*`
-  (`checkEntries` :104), no duplicates, diets must be in `SUPPORTED_DIETS` (:21).
-- `withRequestConstraints` (:94): copy with extra diets/dislikes and `min(time, requestTime)`.
+- Constructor (:36) lower-cases and trims entries but **keeps duplicates**, so `validate` can report them.
+- `validate()` (:54): servings ≥ 1, time ≥ 1, each entry must match `[a-z][a-z \-']*`
+  (`checkEntries` :110), no duplicates, diets must be in `SUPPORTED_DIETS` (:24).
+- `withRequestConstraints` (:100): copy with extra diets/dislikes and `min(time, requestTime)`.
 
 ### 9.8 `domain/Pantry.java`
 - `addItem` (:20): validate (quantity > 0, supported unit). If the ingredient already exists with a
@@ -583,7 +593,7 @@ diets, dislikes and a stricter time limit, so the saved profile never changes.
 - `toBase` (:48): kg → ×1000 g, l → ×1000 ml. `convert(q, from, to)` (:69) = `toBase(q, from) / toBase(1, to)`.
 - `format` (:77): rounds to 2 decimals and drops ".0" ("200 g", "1.5 kg").
 
-### 9.10 `domain/ShoppingList.java` — `consolidate()` (:28)
+### 9.10 `domain/ShoppingList.java` — `consolidate()` (:30)
 Key = `name|family`. Sum every quantity in the base unit (g, ml, pcs). Output one line per key; mass
 or volume ≥ 1000 becomes kg / l. Different families (e.g. 2 pcs onion and 600 g onion) stay separate lines.
 
@@ -595,7 +605,7 @@ Immutable. `builder(id, name)` (:46) is used by `SampleData` (`.time().servings(
 - `MealPlan.addMeal` (:26): one meal per day, max 7, keeps Monday→Sunday order. `replaceMeal` (:43)
   only for an existing day.
 - `PlannedMeal` constructor (:20) normalises the day ("tue" → "Tuesday") and rejects servings < 1.
-- `Days.normalize` (:16): accepts a full name or a prefix of 3+ letters. `firstDays(n)` (:34): plans
+- `Days.normalize` (:21): accepts a full name or a prefix of 3+ letters. `firstDays(n)` (:61): plans
   always start Monday.
 
 ### 9.13 `strategy/` — see 7.3
@@ -608,21 +618,23 @@ Immutable. `builder(id, name)` (:46) is used by `SampleData` (`.time().servings(
   `findById` (:66) is case-insensitive.
 - `ServingScaler.scale(recipe, servings)` (:13): factor = new / old servings; every quantity × factor;
   errors for servings < 1 or bad quantities.
-- `SubstitutionService.findSubstitute` (:42): all predefined substitutions for that ingredient
+- `SubstitutionService.findSubstitute` (:45): all predefined substitutions for that ingredient
   (`getSubstitutionsFor` :31), the first whose substitute has **no** `DietRules.conflicts` with the
-  profile. `applySubstitution` (:57): quantity × factor, unit = substitution's unit or the original.
+  profile. `applySubstitution` (:63): quantity × factor, unit = substitution's unit or the original;
+  `rewriteSteps` (:86) names the substitute in the steps (whole words, plurals kept, short names such as
+  "chicken" for chicken breast when the full name is not in any step).
 - `NutritionService.calculateRecipe` (:12) = per serving × servings; `calculatePlan` (:29) =
   `plan.getNutrition()` (Composite).
-- `ShoppingListService.generate` (:19): see 8.3.
+- `ShoppingListService.generate` (:20): see 8.3.
 - `SampleData`: recipes (:19), starter pantry (:268), substitutions (:281, e.g. butter → olive oil ×0.8 ml at :283).
 
 ### 9.15 `ai/MockAIModel.java` — how the fake AI "thinks"
-- Modes: default heuristic; `scripted(...)` (:55) returns fixed answers (tests); `failing()` (:60).
-- `answer` (:87) reads `TASK:` and calls `answerRecommend` (:100), `answerPlan` (:109) or `answerEdit` (:122).
-- `rank` (:153): drop candidates that are in `EXCLUDE`, slower than `MAX_TIME`, missing a `DIET` tag,
+- Modes: default heuristic; `scripted(...)` (:66) returns fixed answers (tests); `failing()` (:71).
+- `answer` (:99) reads `TASK:` and calls `answerRecommend` (:112), `answerPlan` (:121) or `answerEdit` (:134).
+- `rank` (:163): drop candidates that are in `EXCLUDE`, slower than `MAX_TIME`, missing a `DIET` tag,
   or whose text contains an `AVOID` word. Score the rest by request words (ignoring `STOP_WORDS`
-  :34): tag match +3, other text match +2. Stable sort keeps the strategy's order for ties.
-- It records every prompt (`getPrompts` :81), which tests use to check revisions.
+  :42): tag match +3, other text match +2. Stable sort keeps the strategy's order for ties.
+- It records every prompt (`getPrompts` :92), which tests use to check revisions.
 
 ### 9.16 `ai/PromptFormat.java`
 Constant keys (`TASK`, `REQUEST`, `CANDIDATES`, `RECIPES`, `DAY`, `RECIPE`…) and `field(text, key)`
@@ -632,27 +644,28 @@ Constant keys (`TASK`, `REQUEST`, `CANDIDATES`, `RECIPES`, `DAY`, `RECIPE`…) a
 
 ## 10. The GUI, panel by panel
 
-The window: `MealPlannerGUI.start()` (:52) → `Theme.install()` → `buildContent()` (:66) creates the
-4 panels with the same facade and a `JTabbedPane`. The logo (`logo` :100) and the strategy selector +
-AI model switcher (`statusArea` :112, `modelSwitcher` :150) live in the tab bar. Switching tabs calls `refresh()` / `load()` /
+The window: `MealPlannerGUI.start()` (:55) → `Theme.install()` → `buildContent()` (:72) creates the
+4 panels with the same facade and a `JTabbedPane`. The logo (`logo` :107) and the strategy selector +
+AI model switcher (`statusArea` :122, `modelSwitcher` :168) live in the tab bar. While an AI request
+runs, `AssistantPanel.onBusyChange` tells the window to disable both boxes. Switching tabs calls `refresh()` / `load()` /
 `refreshPlan()`, because another tab may have changed the data.
 
 ### 10.1 `gui/AssistantPanel.java` (tab 1, 804 lines)
 | Part | Where |
 |---|---|
-| Fields (widgets + state `changedDay`, `busy`, `sideView`) | :63–:108 |
-| Layout: request bar / plan card / empty state / right side | `buildRequestBar` :135, `buildPlanCard` :157, `buildEmptyState` :188, `buildSide` :225 |
-| Actions (F04, F05, F06, undo) | `recommend` :297, `createPlan` :315, `editPlan` :328, `undo` :347 |
-| Background running + errors | `runAI` :370, `requestText` :391 |
-| Agent trace (numbered; "Nothing was sent…" when the trace isn't for this request) | `showTrace` :404 |
-| Enable/disable buttons | `setBusy` :428, `updateButtons` :434 |
-| Re-read the plan into the table / empty state | `refreshPlan` :445 |
-| Switch the right panel: results / shopping / nutrition | `showSide` :473 |
-| Find the changed day | `snapshot` :484, `firstDifference` :495 |
-| F10 view | `loadShoppingList` :506, `copyShoppingList` :566, `exportShoppingList` :575 |
-| F09 view | `loadNutrition` :592, `statBox` :631, `dayBar` :641 (draws the bar) |
-| Before → now card | `comparison` :688, `dayBox` :706 |
-| Table cell look + CHANGED tag | `PlanRenderer` :731 |
+| Fields (widgets + state `changedDay`, `busy`, `sideView`, `busyListener`) | :64–:110 |
+| Layout: request bar / plan card / empty state / right side | `buildRequestBar` :137, `buildPlanCard` :159, `buildEmptyState` :190, `buildSide` :228 |
+| Actions (F04, F05, F06, undo) | `recommend` :300, `createPlan` :318, `editPlan` :331, `undo` :350 |
+| Background running + errors | `runAI` :376, `requestText` :397 |
+| Agent trace (numbered; "Nothing was sent…" when the trace isn't for this request) | `showTrace` :413 |
+| Enable/disable buttons | `setBusy` :446, `updateButtons` :453 |
+| Re-read the plan into the table / empty state | `refreshPlan` :467 |
+| Switch the right panel: results / shopping / nutrition | `showSide` :495 |
+| Find the changed day | `snapshot` :506, `firstDifference` :517 |
+| F10 view | `loadShoppingList` :529, `copyShoppingList` :590, `exportShoppingList` :599 |
+| F09 view | `loadNutrition` :617, `statBox` :656, `dayBar` :666 (draws the bar) |
+| Before → now card | `comparison` :715, `dayBox` :733 |
+| Table cell look + CHANGED tag | `PlanRenderer` :761 |
 | Getters used only by tests | :764 onward |
 
 **State model (React terms):** `changedDay` is like `useState<string|null>`. The table model is the
@@ -692,23 +705,24 @@ AI model switcher (`statusArea` :112, `modelSwitcher` :150) live in the tab bar.
 
 ## 11. The CLI
 
-`presentation/MealPlannerCLI.java`: `runLoop` (:72) reads lines until `quit`; `handle` (:108) is one
-big `switch` on the first word. Commands are listed in `HELP` (:35): `profile`, `pantry`, `recipes`,
+`presentation/MealPlannerCLI.java`: `runLoop` (:76) reads lines until `quit`; `handle` (:112) is one
+big `switch` on the first word. Commands are listed in `HELP` (:39): `profile`, `pantry`, `recipes`,
 `search`, `show`, `recommend`, `plan`, `showplan`, `edit`, `undo`, `scale`, `substitute`, `reset`,
-`nutrition`, `shopping`, `strategy`, `trace`. Parsing helpers: `profile` (:194, `key=value` pairs),
-`pantry` (:244, "pantry add olive oil 500 ml" → name = everything before the last 2 words).
+`nutrition`, `shopping`, `strategy`, `trace`. Parsing helpers: `profile` (:199, `key=value` pairs),
+`pantry` (:249, "pantry add olive oil 500 ml" → name = everything before the last 2 words).
 Errors print as `Error: <message>`; the loop never crashes on a `SmartPlateException`.
 
 ---
 
 ## 12. Tests
 
-`mvn test` runs **112 tests** in 20 classes, all offline (no real AI is called):
+`mvn test` runs **134 tests** in 21 classes, all offline (no real AI is called):
 
 | Test class | What it protects |
 |---|---|
 | `domain/UserProfileTest`, `DietRulesTest`, `PantryTest`, `UnitsTest`, `ShoppingListTest` | domain rules and maths |
 | `plan/MealPlanTest` | Composite sums, one meal per day |
+| `plan/DaysTest` | day names found in free text; "sun-dried" is not Sunday |
 | `agent/ConstraintValidatorTest` | allergen found in ingredients even if tags lie |
 | `agent/RequestConstraintsTest` | text → constraints |
 | `agent/MealPlanningAgentTest` | the agent loop: invented ids rejected, **exactly one** revision, AI failure |
@@ -754,20 +768,20 @@ The first answer is wrong, so the second is used for the revision.
 Order matters: the **first** one that fits the profile wins.
 
 ### 13.3 Add a dietary preference (e.g. "keto")
-1. `UserProfile.SUPPORTED_DIETS` (:21): add `"keto"`.
-2. `DietRules.violatesDiet` (:86): add `case "keto": return ...;`.
+1. `UserProfile.SUPPORTED_DIETS` (:24): add `"keto"`.
+2. `DietRules.violatesDiet` (:116): add `case "keto": return ...;`.
 3. The GUI checkbox and request parsing ("something keto") pick it up automatically.
 4. Add a test in `DietRulesTest`.
 
 ### 13.4 Add an allergy group (e.g. "sesame" → tahini, sesame oil)
-`DietRules.GROUP_NAMES` (:18): add `"sesame", Set.of("tahini", "sesame")`. Note `Map.of` allows at most
+`DietRules.GROUP_NAMES` (:25): add `"sesame", Set.of("tahini", "sesame")`. Note `Map.of` allows at most
 10 entries; beyond that, switch to `Map.ofEntries(Map.entry(...), ...)`.
 
 ### 13.5 Add a recipe-selection strategy (e.g. "high protein")
 1. New class `strategy/HighProteinStrategy.java` implementing `RecipeSelectionStrategy` (copy
    `FastestMealStrategy`, sort by `-recipe.getNutritionPerServing().getProtein()`).
 2. `SmartRecipeFacade.setStrategy` (:243): add `else if (key.startsWith("protein")) strategy = new HighProteinStrategy();`.
-3. GUI: add `"protein"` to the combo in `MealPlannerGUI.statusArea` (:112). CLI help text in `HELP` (:35).
+3. GUI: add `"protein"` to the combo in `MealPlannerGUI.statusArea` (:122). CLI help text in `MealPlannerCLI.HELP` (:39).
 4. Add to `StrategyTest`. Update the class diagram.
 
 ### 13.6 Add a new feature end to end (the pattern to follow)
@@ -786,20 +800,20 @@ Order matters: the **first** one that fits the profile wins.
 
 ### 13.8 Change what the AI is told
 - Global rules: `AIAdapter.SYSTEM_PROMPT` (`ai/AIAdapter.java:26`). `OllamaAdapter` and `GeminiAdapter` send the same text.
-- Per-request content: `MealPlanningAgent.newPrompt` (:318) and the `RESPONSE_FORMAT` text in
+- Per-request content: `MealPlanningAgent.newPrompt` (:337) and the `RESPONSE_FORMAT` text in
   `recommend` / `createPlan` / `editPlan`. If you change the format, update the parsers
   (`parsePlan`, `parseIdList`) **and** `MockAIModel` so offline mode still works.
 
 ### 13.9 Use another AI provider
 Write a new class implementing `AIModel` (copy `GeminiAdapter`, the simplest HTTP one), then: add its name
-to `AIModelFactory.PROVIDERS`, a `case` in `forProvider` (:53), its key check in `missingSetting` (:75), an
-`instanceof` in `providerOf` (:87), a label in `MealPlannerGUI.PROVIDER_LABELS`, the key in `.env.example`,
+to `AIModelFactory.PROVIDERS`, a `case` in `forProvider` (:69), its key check in `missingSetting` (:94), an
+`instanceof` in `providerOf` (:106), a label in `MealPlannerGUI.PROVIDER_LABELS`, the key in `.env.example`,
 and tests. The agent doesn't change. That's the point of the Adapter pattern; `OllamaAdapter` and
 `GeminiAdapter` were added exactly this way.
 
 ### 13.10 Add a GUI tab
 New `JPanel` class in `presentation/gui/` that takes the facade in its constructor (copy
-`PantryPanel`), then `tabs.addTab("Name", new YourPanel(facade))` in `MealPlannerGUI.buildContent` (:54).
+`PantryPanel`), then `tabs.addTab("Name", new YourPanel(facade))` in `MealPlannerGUI.buildContent` (:72).
 
 ---
 
@@ -817,9 +831,9 @@ New `JPanel` class in `presentation/gui/` that takes the facade in its construct
 ### 14.2 Where to look, by symptom
 | Symptom | Look in |
 |---|---|
-| Wrong recipe allowed / blocked for an allergy or diet | `DietRules.matches` (:61), ingredient categories in `SampleData` |
-| "avoid X" / "under N minutes" in a request ignored | `RequestConstraints` regexes (:25–:32) |
-| Plan has wrong number of days | `RequestConstraints.planDays` (:96), `Days.firstDays` |
+| Wrong recipe allowed / blocked for an allergy or diet | `DietRules.matches` (:82), ingredient categories in `SampleData` |
+| "avoid X" / "under N minutes" in a request ignored | `RequestConstraints` patterns and word lists (:29–:45) |
+| Plan has wrong number of days | `RequestConstraints.planDays` (:173), `Days.firstDays` |
 | AI answer rejected unexpectedly | trace → `MealPlanningAgent.parsePlan` / `parseIdList`; `PromptFormat.field` |
 | Odd shopping quantities | `PlannedMeal.getIngredients` (scaling), `ShoppingList.consolidate`, `ShoppingListService.generate` |
 | Pantry merge problems | `Pantry.addItem` (:20), `Units.convert` |
@@ -827,39 +841,46 @@ New `JPanel` class in `presentation/gui/` that takes the facade in its construct
 | Button stays disabled / table not updated | the panel's `updateButtons` / `refreshPlan` / `render` (no auto re-render!) |
 | Window looks unstyled | `Theme.install()` not called, or fonts missing from `resources/fonts` |
 | Real AI errors (503 / "No API key") | env var `ANTHROPIC_API_KEY`, `AIAdapter.generate` (:42) error mapping |
-| Wrong AI used / "Unknown SMARTPLATE_AI_PROVIDER" | the setting's spelling (`.env` or environment); `AIModelFactory.create` (:41). The model in use is shown in the GUI's AI model box and the CLI's first line |
-| AI model box turns red / "needs an API key" | the key is missing from `.env` (see `.env.example`); `AIModelFactory.missingSetting` (:75) |
-| Gemini errors ("rejected the API key", "does not know the model", "rate limited") | `GEMINI_API_KEY` / `GEMINI_MODEL` in `.env`; `GeminiAdapter.extractText` (:100) |
-| "Could not reach Ollama" / "ollama pull" / timeout | `ollama serve` running? model pulled? `OLLAMA_URL`; `OllamaAdapter.generate` (:60) |
+| Wrong AI used / "Unknown SMARTPLATE_AI_PROVIDER" | the setting's spelling (`.env` or environment); `AIModelFactory.create` (:55). The model in use is shown in the GUI's AI model box and the CLI's first line |
+| AI model box turns red / "needs an API key" | the key is missing from `.env` (see `.env.example`); `AIModelFactory.missingSetting` (:94) |
+| Gemini errors ("rejected the API key", "does not know the model", "rate limited") | `GEMINI_API_KEY` / `GEMINI_MODEL` in `.env`; `GeminiAdapter.extractText` (:107) |
+| "Could not reach Ollama" / "ollama pull" / timeout | `ollama serve` running? model pulled? `OLLAMA_URL`; `OllamaAdapter.generate` (:73) |
 | Local model keeps failing validation | small models are weaker: try a bigger one (`OLLAMA_MODEL`), check `trace` in the CLI |
 
 ### 14.3 Known issues and limitations (good first fixes)
-1. **Fractional pieces in the shopping list** ("13.5 pcs garlic") when a 4-serving recipe is planned
-   for 2. The maths is right, but people buy whole pieces. *Fix idea:* round `pcs` up in
-   `ShoppingListService.generate` (:19) and add a test.
-2. **The mock AI is simple.** "Swap Tuesday for something with spinach" may pick a recipe without
-   spinach, because the mock only re-ranks the 15 shortlisted candidates and spinach recipes may not
-   be in the pantry-first shortlist. Real Claude does better. *Fix idea:* in `MockAIModel.rank` (:153)
-   prefer candidates whose text contains request words before anything else, or raise
-   `MAX_CANDIDATES`.
-3. **"avoid" reads only one word.** "avoid red onion" → avoids "red"; "avoid mushrooms and olives" →
-   only mushrooms (`RequestConstraints.AVOID` :31).
-4. **Short day names in free text.** In `editPlan`, any word that is a 3+ letter prefix of a day counts
-   as that day, so "sun-dried" → Sunday (`MealPlanningAgent.findDay` :367 + `Days.normalize` :16).
-5. **Plans always start on Monday** (`Days.firstDays`).
-6. **Nothing is saved.** The profile, pantry, plan and working copies are lost when the app closes, and
-   the CLI and GUI are separate processes.
-7. **The facade is not thread-safe.** AI requests run in the background. If the user edits the pantry
-   in another tab during a long real-AI call, both touch the same objects. Low risk with the mock;
-   *fix idea:* disable other tabs while `busy`.
-8. **Profile entries must be plain a–z letters**, so "jalapeño" is "malformed" (`UserProfile.checkEntries` :104).
-9. **Disliking "milk" also blocks "coconut milk"** (whole-word match on the name). That's intentional
-   for allergies, but maybe too strict for dislikes.
-10. **Plan edits are never revised.** `editPlan` follows SD05 (one AI answer). If you want a retry,
-    copy the loop from `createPlan`, and update SD05 too.
-11. **The real AI paths were never run live during development** (no API key, no local model).
-    Claude: only request building and error handling are unit-tested. Ollama and Gemini: tested
-    against fake servers that speak the same JSON, so check each once with your own model or key.
+
+**Fixed during Stage 2** (each fix has a test; commits on `develop`):
+
+| Was | Fix | Where |
+|---|---|---|
+| Shopping list showed "13.5 pcs garlic" | counted items are rounded up to whole numbers, with a note | `ShoppingList.roundUpQuantities` (:60), called from `ShoppingListService.generate` (commit `6bfd56c`) |
+| "sun-dried" in an edit request was read as Sunday | hyphenated words stay whole; only full day names count inside them | `Days.findIn` (:38), used by the agent and the mock (`f70e701`) |
+| "avoid red onion" only avoided "red"; "skip the mushrooms" avoided nothing | the whole phrase is read, lists are split on and/or | `RequestConstraints.avoidedItems` (:116) (`86b5b1e`) |
+| Disliking "milk" also blocked coconut milk, oat milk, peanut butter | a dislike of a dairy word ignores non-dairy ingredients named after it; allergies stay strict | `DietRules.matchesDislike` (:106) (`db82527`) |
+| The AI model could change in the middle of a request | each request keeps the model it started with; the model and strategy boxes are disabled while it runs | `MealPlanningAgent` (:104), `AssistantPanel.onBusyChange` (:441) (`9deb476`) |
+| "jalapeño" was a malformed entry | any letters are accepted; accents are ignored when matching | `UserProfile.checkEntries` (:110), `DietRules.withoutAccents` (:50) (`82148d6`) |
+| — | edge tests: exactly 5/7 days, 4/8 rejected, smallest profile values, scaling to 1 serving | tests (`94a8a8a`) |
+| A second `undo` in the CLI printed "Undone." before "Nothing to undo." | undo first, then print | `MealPlannerCLI` undo case (`f8fe10f`) |
+| "dinner for 9.5 days" was read as 5 days; decimal time limits and servings were ignored | decimals are read: days round to the nearest day (a half toward 5–7), counts and servings to nearest, time limits down | `RequestConstraints.roundTowardRange`, `number` (`c022ae4`) |
+
+**Still open:**
+1. **The mock AI is simple.** "Swap Tuesday for something with spinach" may pick a recipe without
+   spinach, because the mock only re-ranks the 15 shortlisted candidates. Its own avoid filter is a
+   plain word match, so with the mock a dislike of "milk" still skips coconut-milk recipes (the
+   validator allows them). Real models do better. *Fix idea:* in `MockAIModel.rank` (:163) prefer
+   candidates whose text contains request words.
+2. **Plans always start on Monday** (`Days.firstDays` :61).
+3. **Nothing is saved.** The profile, pantry, plan and working copies are lost when the app closes, and
+   the CLI and GUI are separate processes. The course does not require persistence.
+4. **Other tabs stay editable during a request.** The model and strategy boxes are locked while an AI
+   request runs, but the pantry or preferences can still be changed in another tab during a long
+   real-AI call. *Fix idea:* disable the other tabs while `busy`.
+5. **Plan edits are never revised.** `editPlan` follows SD05 (one AI answer). If you want a retry,
+   copy the loop from `createPlan`, and update SD05 too.
+6. **Allergies match by name on purpose.** An allergy to "milk" also blocks "coconut milk". That is
+   the safe choice for allergies; dislikes no longer do this.
+7. **Claude was never run live.** Gemini and the local Ollama model (gemma4:e4b) were run by the author;
+   the Claude path is only unit-tested (request building, error handling).
 
 ### 14.4 Common Java errors and what they mean
 | Error | Meaning / fix |

@@ -9,17 +9,20 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * The user's preferences (F01): dietary preferences, allergies, disliked ingredients,
+ * The user's preferences (F01): dietary preferences, allergies, disliked
+ * ingredients,
  * maximum cooking time and default servings.
  *
- * <p>The raw entries are kept as typed so {@link #validate()} can report duplicates and
+ * <p>
+ * The raw entries are kept as typed so {@link #validate()} can report
+ * duplicates and
  * malformed entries. The getters return the cleaned, de-duplicated sets.
  */
 public class UserProfile {
 
     /** Dietary preferences the system knows how to check. */
-    public static final List<String> SUPPORTED_DIETS =
-            List.of("vegetarian", "vegan", "pescatarian", "gluten-free", "dairy-free");
+    public static final List<String> SUPPORTED_DIETS = List.of("vegetarian", "vegan", "pescatarian", "gluten-free",
+            "dairy-free");
 
     public static final int DEFAULT_MAX_COOKING_TIME = 60;
     public static final int DEFAULT_SERVINGS = 2;
@@ -31,7 +34,7 @@ public class UserProfile {
     private final int defaultServings;
 
     public UserProfile(Collection<String> dietaryPreferences, Collection<String> allergies,
-                       Collection<String> dislikedIngredients, int maxCookingTime, int defaultServings) {
+            Collection<String> dislikedIngredients, int maxCookingTime, int defaultServings) {
         this.dietaryPreferences = clean(dietaryPreferences);
         this.allergies = clean(allergies);
         this.dislikedIngredients = clean(dislikedIngredients);
@@ -45,7 +48,8 @@ public class UserProfile {
     }
 
     /**
-     * Checks the profile and returns a list of problems. An empty list means the profile is valid.
+     * Checks the profile and returns a list of problems. An empty list means the
+     * profile is valid.
      */
     public List<String> validate() {
         List<String> problems = new ArrayList<>();
@@ -87,12 +91,14 @@ public class UserProfile {
     }
 
     /**
-     * Copy of this profile with extra diets, extra dislikes and an optional tighter time limit.
-     * Used by the agent to apply one-off constraints from a request ("vegetarian, avoid
+     * Copy of this profile with extra diets, extra dislikes and an optional tighter
+     * time limit.
+     * Used by the agent to apply one-off constraints from a request ("vegetarian,
+     * avoid
      * mushrooms, under 30 minutes") without changing the stored profile.
      */
     public UserProfile withRequestConstraints(Collection<String> extraDiets, Collection<String> extraDislikes,
-                                              Integer maxTime) {
+            Integer maxTime) {
         Set<String> diets = new LinkedHashSet<>(getDietaryPreferences());
         diets.addAll(extraDiets);
         Set<String> dislikes = new LinkedHashSet<>(getDislikedIngredients());
@@ -106,7 +112,7 @@ public class UserProfile {
         for (String entry : entries) {
             if (entry.isEmpty()) {
                 problems.add("Empty " + label + " entry.");
-            } else if (!entry.matches("[a-z][a-z \\-']*")) {
+            } else if (!entry.matches("\\p{L}[\\p{L} \\-']*")) { // any letters, so "jalapeño" is fine
                 problems.add("Malformed " + label + " '" + entry + "' (use letters, spaces or hyphens).");
             } else if (!seen.add(entry)) {
                 problems.add("Duplicate " + label + " '" + entry + "'.");

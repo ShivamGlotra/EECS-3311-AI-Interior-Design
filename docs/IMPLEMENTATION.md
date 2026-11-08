@@ -1,7 +1,7 @@
 # SmartPlate — Implementation Guide (Code Explanation)
 
 This document explains the Java implementation of the design in the Stage 1 report
-([README.md](../README.md)). It covers how to build and run the project, how the code maps to the
+([SmartPlate_Stage1_Report_FINAL.md](../SmartPlate_Stage1_Report_FINAL.md)). It covers how to build and run the project, how the code maps to the
 class diagram, how each design pattern is implemented, and how each of the ten features (F01–F10)
 runs through the code.
 
@@ -12,7 +12,7 @@ runs through the code.
 Requirements: **Java 17+** and **Maven 3.8+**. No other installation is needed.
 
 ```bash
-mvn test                 # compile and run the 112 JUnit 5 tests
+mvn test                 # compile and run the 134 JUnit 5 tests
 mvn package              # builds target/smartplate-1.0.0.jar (includes all dependencies)
 
 java -jar target/smartplate-1.0.0.jar          # desktop GUI (falls back to the CLI if there is no display)
@@ -125,7 +125,7 @@ src/main/java/com/smartplate/
 └── service/        RecipeRepository (Data layer), NutritionService, ServingScaler,
                     SubstitutionService, ShoppingListService, SampleData
 src/main/resources/fonts/       IBM Plex Sans / Mono (SIL Open Font License, OFL.txt)
-src/test/java/com/smartplate/   20 JUnit 5 test classes, 112 tests
+src/test/java/com/smartplate/   21 JUnit 5 test classes, 134 tests
 ```
 
 Each package matches a package in the class diagram (`docs/umlet-diagrams/class/SmartPlate_ClassDiagram.uxf`).
@@ -378,7 +378,7 @@ Each feature lists its entry point, the classes involved, and where its tests ar
 mvn test
 ```
 
-* 112 tests in 20 classes. They cover every feature, every pattern, and the main error flows from
+* 134 tests in 21 classes. They cover every feature, every pattern, and the main error flows from
   the use-case descriptions.
 * All tests use `MockAIModel`, so they need no network or API key and always give the same result.
   `OllamaAdapterTest` runs the Ollama adapter against a small fake Ollama server inside the test
@@ -399,7 +399,8 @@ mvn test
 ## 7. Additions and small differences from the Stage 1 class diagram
 
 The implementation follows the class diagram. The helper classes below were added; none of them
-changes a pattern or a sequence diagram.
+changes a pattern or a sequence diagram. The complete list of design changes, each with its reason,
+and the feature-by-feature traceability table are in [`STAGE2_REPORT.md` §2 and §4](STAGE2_REPORT.md#2-feature-to-implementation-mapping).
 
 | Addition / difference | Why |
 |---|---|

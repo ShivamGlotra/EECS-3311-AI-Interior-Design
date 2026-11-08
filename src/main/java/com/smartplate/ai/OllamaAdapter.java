@@ -15,22 +15,35 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /**
- * Adapter pattern - a second Adapter, for a local model served by Ollama (https://ollama.com).
+ * Adapter pattern - a second Adapter, for a local model served by Ollama
+ * (https://ollama.com).
  *
- * <p>Works like AIAdapter: it implements the AIModel interface the agent expects, translates
- * {@code generate(prompt)} into Ollama's {@code POST /api/chat} request, and translates the JSON
- * reply back into plain text. Errors become AIServiceException, so the agent needs no changes.
- * It uses only the JDK's HttpClient and Jackson (already on the classpath through the Anthropic SDK).
+ * <p>
+ * Works like AIAdapter: it implements the AIModel interface the agent expects,
+ * translates
+ * {@code generate(prompt)} into Ollama's {@code POST /api/chat} request, and
+ * translates the JSON
+ * reply back into plain text. Errors become AIServiceException, so the agent
+ * needs no changes.
+ * It uses only the JDK's HttpClient and Jackson (already on the classpath
+ * through the Anthropic SDK).
  */
 public class OllamaAdapter implements AIModel {
-
+    /**
+     * The default base URL for the Ollama API.
+     */
     public static final String DEFAULT_BASE_URL = "http://localhost:11434";
-    public static final String DEFAULT_MODEL = "llama3.2";
+    public static final String DEFAULT_MODEL = "OllMA_LOCAL_MODEL";
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(5);
-    /** Local models can be slow, especially the first call while the model loads into memory. */
+    /**
+     * Local models can be slow, especially the first call while the model loads
+     * into memory.
+     */
     private static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(180);
-    /** Low temperature: picking ids from a list should be predictable, not creative. */
+    /**
+     * Low temperature: picking ids from a list should be predictable, not creative.
+     */
     private static final double TEMPERATURE = 0.2;
 
     private static final ObjectMapper JSON = new ObjectMapper();
@@ -115,7 +128,10 @@ public class OllamaAdapter implements AIModel {
         return text;
     }
 
-    /** Reasoning models (e.g. deepseek-r1, qwen3) put their thinking in <think> tags before the answer. */
+    /**
+     * Reasoning models (e.g. deepseek-r1, qwen3) put their thinking in <think> tags
+     * before the answer.
+     */
     static String stripThinking(String text) {
         return text.replaceAll("(?s)<think>.*?</think>", "");
     }

@@ -25,10 +25,14 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Command-line interface. Reads one command per line and calls only SmartRecipeFacade.
+ * Command-line interface. Reads one command per line and calls only
+ * SmartRecipeFacade.
  *
- * <p>Scaling and substitution return changed copies of a recipe; the CLI keeps the latest
- * copy of each recipe as a "working copy" so the two can be combined (scale, then substitute).
+ * <p>
+ * Scaling and substitution return changed copies of a recipe; the CLI keeps the
+ * latest
+ * copy of each recipe as a "working copy" so the two can be combined (scale,
+ * then substitute).
  */
 public class MealPlannerCLI {
 
@@ -151,8 +155,9 @@ public class MealPlannerCLI {
                 printPlan(facade.editMealPlan(rest));
                 break;
             case "undo":
+                MealPlan restored = facade.undoLastChange();
                 out.println("Undone.");
-                printPlan(facade.undoLastChange());
+                printPlan(restored);
                 break;
             case "scale":
                 scale(rest);

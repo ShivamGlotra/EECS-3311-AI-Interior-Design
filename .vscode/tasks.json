@@ -1,0 +1,66 @@
+{
+    // SmartPlate tasks: the Java version of "scripts" in package.json.
+    // Run them from Terminal > Run Task..., Ctrl/Cmd+Shift+B (build),
+    // or the "Task Runner" view at the bottom of the Explorer (extension: sanaajani.taskrunnercode).
+    // They run in the project folder, so the app finds your .env file.
+    "version": "2.0.0",
+    // PowerShell splits arguments like -Dexec.args=--cli, so use cmd.exe on Windows.
+    "windows": {
+        "options": {
+            "shell": { "executable": "cmd.exe", "args": ["/d", "/c"] }
+        }
+    },
+    "tasks": [
+        {
+            "label": "SmartPlate: run app",
+            "detail": "Start the desktop app (AI model from .env, or the offline mock)",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["-q", "compile", "exec:java"],
+            "problemMatcher": []
+        },
+        {
+            "label": "SmartPlate: run CLI",
+            "detail": "Start the command-line version (type commands in the terminal)",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["-q", "compile", "exec:java", "-Dexec.args=--cli"],
+            "problemMatcher": [],
+            "presentation": { "focus": true }
+        },
+        {
+            "label": "SmartPlate: run with mock AI",
+            "detail": "Start the desktop app with the offline mock AI, whatever .env says",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["-q", "compile", "exec:java", "-Dexec.args=--mock"],
+            "problemMatcher": []
+        },
+        {
+            "label": "SmartPlate: test",
+            "detail": "Run all JUnit tests (offline)",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["test"],
+            "group": { "kind": "test", "isDefault": true },
+            "problemMatcher": []
+        },
+        {
+            "label": "SmartPlate: build jar",
+            "detail": "Build target/smartplate-1.0.0.jar (runs the tests first)",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["package"],
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": []
+        },
+        {
+            "label": "SmartPlate: clean",
+            "detail": "Delete the target/ folder",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["clean"],
+            "problemMatcher": []
+        }
+    ]
+}

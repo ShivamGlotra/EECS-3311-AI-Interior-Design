@@ -15,17 +15,25 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Offline implementation of AIModel (Adapter pattern - alternative to AIAdapter).
+ * Offline implementation of AIModel (Adapter pattern - alternative to
+ * AIAdapter).
  *
- * <p>Lets SmartPlate run and be tested with no external LLM and no API key. It has three modes:
+ * <p>
+ * Lets SmartPlate run and be tested with no external LLM and no API key. It has
+ * three modes:
  * <ul>
- *   <li><b>heuristic</b> (default): reads the prompt written by MealPlanningAgent and answers like a
- *       sensible model would - it skips candidates that clash with the listed diet / avoid terms /
- *       time limit / exclusions, prefers candidates that match words in the request, and answers in
- *       the requested RESPONSE_FORMAT.</li>
- *   <li><b>scripted</b>: returns pre-written answers in order (used by tests to force a bad first
- *       answer and check that the agent revises once).</li>
- *   <li><b>failing</b>: always throws AIServiceException (tests the "AI service fails" flows).</li>
+ * <li><b>heuristic</b> (default): reads the prompt written by MealPlanningAgent
+ * and answers like a
+ * sensible model would - it skips candidates that clash with the listed diet /
+ * avoid terms /
+ * time limit / exclusions, prefers candidates that match words in the request,
+ * and answers in
+ * the requested RESPONSE_FORMAT.</li>
+ * <li><b>scripted</b>: returns pre-written answers in order (used by tests to
+ * force a bad first
+ * answer and check that the agent revises once).</li>
+ * <li><b>failing</b>: always throws AIServiceException (tests the "AI service
+ * fails" flows).</li>
  * </ul>
  * Every prompt received is recorded so tests can inspect it.
  */
@@ -51,7 +59,10 @@ public class MockAIModel implements AIModel {
         this.failing = failing;
     }
 
-    /** A mock that returns these answers in order, then falls back to heuristic answers. */
+    /**
+     * A mock that returns these answers in order, then falls back to heuristic
+     * answers.
+     */
     public static MockAIModel scripted(String... answers) {
         return new MockAIModel(Arrays.asList(answers), false);
     }
@@ -82,7 +93,8 @@ public class MockAIModel implements AIModel {
         return Collections.unmodifiableList(prompts);
     }
 
-    // ------------------------------------------------------------------ heuristic answers
+    // ------------------------------------------------------------------ heuristic
+    // answers
 
     private String answer(String prompt) {
         String task = PromptFormat.field(prompt, PromptFormat.TASK).toUpperCase(Locale.ROOT);
@@ -122,12 +134,7 @@ public class MockAIModel implements AIModel {
     private String answerEdit(String prompt, List<Candidate> ranked) {
         String day = Days.normalize(PromptFormat.field(prompt, PromptFormat.TARGET_DAY));
         if (day == null) {
-            for (String word : words(PromptFormat.field(prompt, PromptFormat.REQUEST))) {
-                day = Days.normalize(word);
-                if (day != null) {
-                    break;
-                }
-            }
+            day = Days.findIn(PromptFormat.field(prompt, PromptFormat.REQUEST));
         }
         Set<String> inPlan = new HashSet<>();
         for (String entry : splitList(PromptFormat.field(prompt, PromptFormat.CURRENT_PLAN).replace(';', ','))) {
@@ -149,7 +156,10 @@ public class MockAIModel implements AIModel {
         return PromptFormat.DAY + ": " + (day == null ? "unknown" : day) + "\n" + PromptFormat.RECIPE + ": " + choice;
     }
 
-    /** Candidates that fit the listed constraints, best match with the request first. */
+    /**
+     * Candidates that fit the listed constraints, best match with the request
+     * first.
+     */
     private List<Candidate> rank(String prompt) {
         List<String> diets = splitList(PromptFormat.field(prompt, PromptFormat.DIET));
         List<String> avoid = splitList(PromptFormat.field(prompt, PromptFormat.AVOID));
