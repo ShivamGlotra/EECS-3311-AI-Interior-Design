@@ -80,6 +80,36 @@ class ServicesTest {
     }
 
     @Test
+    void substitutionAlsoRenamesTheIngredientInTheSteps() {
+        SubstitutionService service = SubstitutionService.withDefaultSubstitutions();
+        UserProfile none = TestData.noRestrictions();
+        Recipe rice = service.applySubstitution(repo.findById("r01"),
+                service.findSubstitute(new Ingredient("soy sauce"), none));
+        assertEquals("Fry the peas and carrot, add rice, coconut aminos, eggs and green onion.", rice.getSteps().get(2));
+        Recipe omelette = service.applySubstitution(repo.findById("r13"),
+                service.findSubstitute(new Ingredient("milk"), none));
+        assertEquals("Whisk eggs with oat milk.", omelette.getSteps().get(0));
+        assertTrue(repo.findById("r13").getSteps().get(0).endsWith("with milk."), "original unchanged");
+    }
+
+    @Test
+    void stepsThatUseAShortNameAreRewrittenToo() {
+        SubstitutionService service = SubstitutionService.withDefaultSubstitutions();
+        UserProfile none = TestData.noRestrictions();
+        Recipe stirFry = service.applySubstitution(repo.findById("r04"),
+                service.findSubstitute(new Ingredient("chicken breast"), none));
+        assertEquals("Stir-fry sliced tofu until cooked.", stirFry.getSteps().get(1));
+        Recipe quesadillas = service.applySubstitution(repo.findById("r08"),
+                service.findSubstitute(new Ingredient("flour tortilla"), none));
+        assertEquals("Fill corn tortillas with beans, pepper and cheese.", quesadillas.getSteps().get(0));
+        // the full name is in a step, so a separate "sauce" is left alone
+        Recipe noodles = service.applySubstitution(repo.findById("r15"),
+                service.findSubstitute(new Ingredient("soy sauce"), none));
+        assertEquals("Whisk peanut butter, coconut aminos and lime juice.", noodles.getSteps().get(1));
+        assertEquals("Toss noodles with sauce and sliced vegetables.", noodles.getSteps().get(2));
+    }
+
+    @Test
     void substitutionErrors() {
         SubstitutionService service = SubstitutionService.withDefaultSubstitutions();
         assertThrows(SmartPlateException.class,

@@ -12,7 +12,7 @@ runs through the code.
 Requirements: **Java 17+** and **Maven 3.8+**. No other installation is needed.
 
 ```bash
-mvn test                 # compile and run the 132 JUnit 5 tests
+mvn test                 # compile and run the 134 JUnit 5 tests
 mvn package              # builds target/smartplate-1.0.0.jar (includes all dependencies)
 
 java -jar target/smartplate-1.0.0.jar          # desktop GUI (falls back to the CLI if there is no display)
@@ -125,7 +125,7 @@ src/main/java/com/smartplate/
 └── service/        RecipeRepository (Data layer), NutritionService, ServingScaler,
                     SubstitutionService, ShoppingListService, SampleData
 src/main/resources/fonts/       IBM Plex Sans / Mono (SIL Open Font License, OFL.txt)
-src/test/java/com/smartplate/   21 JUnit 5 test classes, 132 tests
+src/test/java/com/smartplate/   21 JUnit 5 test classes, 134 tests
 ```
 
 Each package matches a package in the class diagram (`docs/umlet-diagrams/class/SmartPlate_ClassDiagram.uxf`).
@@ -378,7 +378,7 @@ Each feature lists its entry point, the classes involved, and where its tests ar
 mvn test
 ```
 
-* 132 tests in 21 classes. They cover every feature, every pattern, and the main error flows from
+* 134 tests in 21 classes. They cover every feature, every pattern, and the main error flows from
   the use-case descriptions.
 * All tests use `MockAIModel`, so they need no network or API key and always give the same result.
   `OllamaAdapterTest` runs the Ollama adapter against a small fake Ollama server inside the test
